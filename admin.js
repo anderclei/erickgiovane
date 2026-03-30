@@ -13,13 +13,7 @@ const DEFAULT_PASS = 'askdjaskdjkadk#$';
 
 // ── Estado local do admin ────────────────────────────────────
 let adminData = {};
-// Supabase client singleton
-let _sbClient = null;
-function sb() {
-  if (!_sbClient) _sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  return _sbClient;
-}
-
+// sb() é definido globalmente em data.js (carregado antes)
 
 function showToast(msg, duration = 3000) {
   const toast = document.getElementById('adminToast');
@@ -92,7 +86,9 @@ function initLogin() {
 }
 
 function showPanel() {
-  document.getElementById('loginScreen').hidden = true;
+  const loginScreen = document.getElementById('loginScreen');
+  loginScreen.hidden = true;
+  loginScreen.style.display = 'none';
   document.getElementById('adminPanel').hidden = false;
   initPanel();
 }

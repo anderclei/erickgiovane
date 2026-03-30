@@ -86,22 +86,29 @@ const SITE_DEFAULTS = {
 };
 
 // ─────────────────────────────────────────────────────────────
-// SUPABASE CLIENT (inicializado apenas se config disponível)
+// SUPABASE CLIENT — singleton global (compartilhado com admin.js)
 // ─────────────────────────────────────────────────────────────
-function getSupabaseClient() {
+var _sbClient = null; // var para ser acessível globalmente
+
+function sb() {
+  if (_sbClient) return _sbClient;
   try {
     if (
       typeof supabase === 'undefined' ||
-      !SUPABASE_URL ||
-      SUPABASE_URL.includes('SEU_PROJETO') ||
-      !SUPABASE_ANON_KEY ||
-      SUPABASE_ANON_KEY.includes('SEU_ANON_KEY')
+      !SUPABASE_URL || SUPABASE_URL.includes('SEU_PROJETO') ||
+      !SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.includes('SEU_ANON_KEY')
     ) return null;
-    return supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    _sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return _sbClient;
   } catch (e) {
+    console.warn('[sb] Falha ao criar cliente Supabase:', e);
     return null;
   }
 }
+
+// compatibilidade com código legado
+function getSupabaseClient() { return sb(); }
+
 
 // ─────────────────────────────────────────────────────────────
 // LOAD — Supabase → localStorage → defaults
