@@ -13,13 +13,13 @@ const DEFAULT_PASS = 'askdjaskdjkadk#$';
 
 // ── Estado local do admin ────────────────────────────────────
 let adminData = {};
-
-// ─────────────────────────────────────────────────────────────
-// UTILITÁRIOS
-// ─────────────────────────────────────────────────────────────
-function getPass() {
-  return localStorage.getItem(PASS_KEY) || DEFAULT_PASS;
+// Supabase client singleton
+let _sbClient = null;
+function sb() {
+  if (!_sbClient) _sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  return _sbClient;
 }
+
 
 function showToast(msg, duration = 3000) {
   const toast = document.getElementById('adminToast');
@@ -38,13 +38,15 @@ function readFileAsDataURL(file) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// LOGIN
+// LOGIN — Supabase Auth (email + senha)
 // ─────────────────────────────────────────────────────────────
 function initLogin() {
-  const form = document.getElementById('loginForm');
-  const passInput = document.getElementById('loginPass');
-  const errorEl = document.getElementById('loginError');
-  const toggleBtn = document.getElementById('togglePass');
+  const form       = document.getElementById('loginForm');
+  const emailInput = document.getElementById('loginEmail');
+  const passInput  = document.getElementById('loginPass');
+  const errorEl    = document.getElementById('loginError');
+  const submitBtn  = document.getElementById('loginSubmitBtn');
+  const toggleBtn  = document.getElementById('togglePass');
 
   // Toggle password visibility
   toggleBtn.addEventListener('click', () => {
@@ -53,64 +55,81 @@ function initLogin() {
     toggleBtn.querySelector('svg').style.opacity = type === 'text' ? '0.5' : '1';
   });
 
-  form.addEventListener('submit', (e) => {
+  // Form submit — Supabase Auth
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     errorEl.textContent = '';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Entrando...';
 
-    if (passInput.value === getPass()) {
-      document.getElementById('loginScreen').hidden = true;
-      document.getElementById('adminPanel').hidden = false;
-      initPanel();
-    } else {
-      errorEl.textContent = 'Senha incorreta. Tente novamente.';
-      passInput.value = '';
-      passInput.focus();
+    const email    = emailInput.value.trim();
+    const password = passInput.value;
+
+    if (!email || !password) {
+      errorEl.textContent = 'Preencha e-mail e senha.';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Entrar';
+      return;
+    }
+
+    try {
+      const { data, error } = await sb().auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      showPanel();
+    } catch (err) {
+      errorEl.textContent = err.message === 'Invalid login credentials'
+        ? 'E-mail ou senha incorretos.'
+        : (err.message || 'Erro ao fazer login.');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Entrar';
     }
   });
 
-  // Auto-login if session cookie set (simple session)
-  if (sessionStorage.getItem('adminLoggedIn') === '1') {
-    document.getElementById('loginScreen').hidden = true;
-    document.getElementById('adminPanel').hidden = false;
-    initPanel();
-  }
+  // Verifica sessão já ativa
+  sb().auth.getSession().then(({ data: { session } }) => {
+    if (session) showPanel();
+  });
+}
+
+function showPanel() {
+  document.getElementById('loginScreen').hidden = true;
+  document.getElementById('adminPanel').hidden = false;
+  initPanel();
 }
 
 // ─────────────────────────────────────────────────────────────
 // PAINEL
 // ─────────────────────────────────────────────────────────────
 function initPanel() {
-  sessionStorage.setItem('adminLoggedIn', '1');
-
-  // Carregar dados
-  adminData = loadSiteData();
-
   // Preencher todos os campos
-  fillHeroTab();
-  fillAtletaTab();
-  fillSobreTab();
-  fillJogoTab();
-  fillGaleriaTab();
-  fillResultadosTab();
-  fillContatoTab();
+  adminData = {};
+  loadSiteData().then((data) => {
+    adminData = data;
+    fillHeroTab();
+    fillAtletaTab();
+    fillSobreTab();
+    fillJogoTab();
+    fillGaleriaTab();
+    fillResultadosTab();
+    fillContatoTab();
+  });
 
   // Tabs
   initTabs();
-
-  // Sidebar mobile
   initSidebarMobile();
 
-  // Salvar
   document.getElementById('globalSaveBtn').addEventListener('click', saveAll);
 
-  // Logout
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    sessionStorage.removeItem('adminLoggedIn');
+  // Logout via Supabase
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await sb().auth.signOut();
     location.reload();
   });
 
   // Senha
   document.getElementById('changeSenhaBtn').addEventListener('click', changeSenha);
+  // Usuários
+  fillUsuariosTab();
 }
 
 // ── TABS ─────────────────────────────────────────────────────
@@ -127,6 +146,7 @@ function initTabs() {
     galeria:    'Galeria',
     resultados: 'Resultados',
     contato:    'Contato',
+    usuarios:   'Usuários',
     senha:      'Senha',
   };
 
@@ -532,19 +552,91 @@ async function saveAll() {
 }
 
 // ─────────────────────────────────────────────────────────────
-// ALTERAR SENHA
+// TAB: USUÁRIOS
 // ─────────────────────────────────────────────────────────────
-function changeSenha() {
-  const atual    = document.getElementById('senhaAtual').value;
+function fillUsuariosTab() {
+  renderUsersTable();
+
+  document.getElementById('addUserBtn').addEventListener('click', async () => {
+    const nome  = document.getElementById('novoUserNome').value.trim();
+    const email = document.getElementById('novoUserEmail').value.trim();
+    const role  = document.getElementById('novoUserRole').value;
+    const fb    = document.getElementById('userFeedback');
+
+    if (!nome || !email) {
+      fb.style.color = '#ff5c5c';
+      fb.textContent = 'Preencha nome e e-mail.';
+      return;
+    }
+
+    const { error } = await sb()
+      .from('site_admins')
+      .insert({ nome, email, role });
+
+    if (error) {
+      fb.style.color = '#ff5c5c';
+      fb.textContent = error.code === '23505'
+        ? 'Usuário com este e-mail já existe.'
+        : ('Erro: ' + error.message);
+      return;
+    }
+
+    fb.style.color = '#AAFF00';
+    fb.textContent = '✓ Usuário adicionado! Crie a senha dele no Supabase Dashboard.';
+    document.getElementById('novoUserNome').value  = '';
+    document.getElementById('novoUserEmail').value = '';
+    renderUsersTable();
+    setTimeout(() => { fb.textContent = ''; }, 5000);
+  });
+}
+
+async function renderUsersTable() {
+  const tbody = document.getElementById('usersTableBody');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--c-muted)">Carregando...</td></tr>';
+
+  const { data, error } = await sb()
+    .from('site_admins')
+    .select('id, nome, email, role, criado_em')
+    .order('criado_em', { ascending: true });
+
+  if (error) {
+    tbody.innerHTML = `<tr><td colspan="5" style="color:#ff5c5c;text-align:center">Erro: ${escHtml(error.message)}</td></tr>`;
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--c-muted)">Nenhum usuário cadastrado.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.map((u) => {
+    const criado = u.criado_em ? new Date(u.criado_em).toLocaleDateString('pt-BR') : '—';
+    return `<tr>
+      <td data-label="Nome">${escHtml(u.nome || '—')}</td>
+      <td data-label="E-mail">${escHtml(u.email)}</td>
+      <td data-label="Função"><span class="role-badge role-${escHtml(u.role)}">${escHtml(u.role)}</span></td>
+      <td data-label="Criado em">${criado}</td>
+      <td class="action-cell"><button class="adm-btn adm-btn--danger" data-uid="${escHtml(u.id)}" onclick="removeUser(this)">Remover</button></td>
+    </tr>`;
+  }).join('');
+}
+
+async function removeUser(btn) {
+  const uid = btn.dataset.uid;
+  if (!confirm('Remover este usuário do painel?')) return;
+  const { error } = await sb().from('site_admins').delete().eq('id', uid);
+  if (!error) renderUsersTable();
+  else showToast('Erro ao remover: ' + error.message);
+}
+
+// ─────────────────────────────────────────────────────────────
+// ALTERAR SENHA — Supabase Auth
+// ─────────────────────────────────────────────────────────────
+async function changeSenha() {
   const nova     = document.getElementById('senhaNova').value;
   const confirm  = document.getElementById('senhaConfirm').value;
   const feedback = document.getElementById('senhaFeedback');
 
-  if (atual !== getPass()) {
-    feedback.style.color = '#ff5c5c';
-    feedback.textContent = 'Senha atual incorreta.';
-    return;
-  }
   if (nova.length < 6) {
     feedback.style.color = '#ff5c5c';
     feedback.textContent = 'A nova senha deve ter pelo menos 6 caracteres.';
@@ -556,13 +648,17 @@ function changeSenha() {
     return;
   }
 
-  localStorage.setItem(PASS_KEY, nova);
+  const { error } = await sb().auth.updateUser({ password: nova });
+  if (error) {
+    feedback.style.color = '#ff5c5c';
+    feedback.textContent = 'Erro: ' + error.message;
+    return;
+  }
+
   feedback.style.color = '#AAFF00';
   feedback.textContent = '✓ Senha alterada com sucesso!';
-  document.getElementById('senhaAtual').value = '';
-  document.getElementById('senhaNova').value  = '';
+  document.getElementById('senhaNova').value    = '';
   document.getElementById('senhaConfirm').value = '';
-
   setTimeout(() => { feedback.textContent = ''; }, 4000);
 }
 

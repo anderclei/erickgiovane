@@ -21,18 +21,21 @@
       </div>
       <form id="loginForm" novalidate>
         <div class="adm-form-group">
-          <label for="loginPass">Senha de acesso</label>
+          <label for="loginEmail">E-mail</label>
+          <input type="email" id="loginEmail" placeholder="seu@email.com" autocomplete="email" required />
+        </div>
+        <div class="adm-form-group">
+          <label for="loginPass">Senha</label>
           <div class="password-wrap">
-            <input type="password" id="loginPass" placeholder="Digite a senha" autocomplete="current-password" />
+            <input type="password" id="loginPass" placeholder="Digite sua senha" autocomplete="current-password" required />
             <button type="button" class="toggle-pass" id="togglePass" aria-label="Mostrar senha">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
           </div>
         </div>
         <p class="login-error" id="loginError" aria-live="polite"></p>
-        <button type="submit" class="adm-btn adm-btn--primary adm-btn--full">Entrar</button>
+        <button type="submit" class="adm-btn adm-btn--primary adm-btn--full" id="loginSubmitBtn">Entrar</button>
       </form>
-      <p class="login-hint">Senha padrão: <code>erick2025</code></p>
     </div>
   </div>
 
@@ -55,6 +58,7 @@
           <li><button class="sidebar-link" data-tab="galeria">🖼️ Galeria</button></li>
           <li><button class="sidebar-link" data-tab="resultados">📊 Resultados</button></li>
           <li><button class="sidebar-link" data-tab="contato">📞 Contato</button></li>
+          <li><button class="sidebar-link" data-tab="usuarios">👥 Usuários</button></li>
           <li><button class="sidebar-link" data-tab="senha">🔐 Senha</button></li>
         </ul>
       </nav>
@@ -299,15 +303,62 @@
 
       </section>
 
+      <!-- ─── TAB: USUÁRIOS ──────────────────────────────────── -->
+      <section class="admin-tab" id="tab-usuarios" aria-label="Gestão de usuários" hidden>
+
+        <div class="tab-section">
+          <h2 class="tab-section-title">Usuários com acesso ao painel</h2>
+          <p class="tab-desc">Usuários cadastrados no Supabase com permissão de acesso a este painel.</p>
+          <div class="users-table-wrapper">
+            <table class="table-editor" id="usersTable">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>E-mail</th>
+                  <th>Função</th>
+                  <th>Criado em</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <tr><td colspan="5" style="text-align:center;color:var(--c-muted)">Carregando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tab-section">
+          <h2 class="tab-section-title">Adicionar novo usuário</h2>
+          <p class="tab-desc">Após adicionar aqui, vá ao <a href="https://supabase.com/dashboard" target="_blank" style="color:var(--c-accent)">Supabase Dashboard</a> → Authentication → Users → Create User com o mesmo e-mail e senha.</p>
+          <div class="adm-form-grid">
+            <div class="adm-form-group">
+              <label for="novoUserNome">Nome completo</label>
+              <input type="text" id="novoUserNome" placeholder="Nome do usuário" />
+            </div>
+            <div class="adm-form-group">
+              <label for="novoUserEmail">E-mail</label>
+              <input type="email" id="novoUserEmail" placeholder="email@exemplo.com" />
+            </div>
+            <div class="adm-form-group">
+              <label for="novoUserRole">Função</label>
+              <select id="novoUserRole">
+                <option value="editor">Editor</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+          <button class="adm-btn adm-btn--primary" id="addUserBtn">+ Adicionar usuário</button>
+          <p class="senha-feedback" id="userFeedback" aria-live="polite"></p>
+        </div>
+
+      </section>
+
       <!-- ─── TAB: SENHA ─────────────────────────────────────── -->
       <section class="admin-tab" id="tab-senha" aria-label="Alterar senha" hidden>
 
         <div class="tab-section">
-          <h2 class="tab-section-title">Alterar senha do painel</h2>
-          <div class="adm-form-group" style="max-width:400px">
-            <label for="senhaAtual">Senha atual</label>
-            <input type="password" id="senhaAtual" placeholder="Senha atual" />
-          </div>
+          <h2 class="tab-section-title">Alterar minha senha</h2>
+          <p class="tab-desc">Altera a senha da sua conta Supabase (autenticação real).</p>
           <div class="adm-form-group" style="max-width:400px">
             <label for="senhaNova">Nova senha</label>
             <input type="password" id="senhaNova" placeholder="Mínimo 6 caracteres" />

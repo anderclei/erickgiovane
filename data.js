@@ -6,6 +6,18 @@
  * Linha usada: id = 'main'
  */
 
+// Incrementar este número limpa o cache do localStorage automaticamente
+const CACHE_VERSION = '2';
+const CACHE_VERSION_KEY = 'erickSiteDataVersion';
+
+// Limpa localStorage se a versão mudou
+(function clearStaleCache() {
+  if (localStorage.getItem(CACHE_VERSION_KEY) !== CACHE_VERSION) {
+    localStorage.removeItem('erickSiteData');
+    localStorage.setItem(CACHE_VERSION_KEY, CACHE_VERSION);
+  }
+})();
+
 const SITE_DEFAULTS = {
   // ── HERO ──────────────────────────────────────────────────────
   hero: {
@@ -42,12 +54,12 @@ const SITE_DEFAULTS = {
 
   // ── GALERIA ───────────────────────────────────────────────────
   galeria: [
-    { src: 'img/foto1.jpg', alt: 'Erick Giovane em ação no saibro',      legenda: 'Competição' },
-    { src: 'img/foto2.jpg', alt: 'Erick Giovane – forehand potente',      legenda: 'Treino' },
-    { src: 'img/foto3.jpg', alt: 'Erick Giovane preparando backswing',    legenda: 'Competição' },
-    { src: 'img/foto4.jpg', alt: 'Erick Giovane executando forehand',     legenda: 'Competição' },
-    { src: 'img/foto5.jpg', alt: 'Erick Giovane – backhand potente',      legenda: 'Treino' },
-    { src: '',              alt: 'Em breve',                              legenda: 'Bastidor' },
+    { src: 'img/hero_atleta.png',   alt: 'Erick Giovane em ação',           legenda: 'Competição' },
+    { src: 'img/demo_hero.png',     alt: 'Erick Giovane – forehand potente', legenda: 'Treino' },
+    { src: 'img/demo_bastidor.png', alt: 'Erick Giovane nos bastidores',     legenda: 'Bastidor' },
+    { src: 'img/demo_celebra.png',  alt: 'Erick Giovane comemorando',        legenda: 'Competição' },
+    { src: 'img/demo_hero.png',     alt: 'Erick Giovane em quadra',          legenda: 'Treino' },
+    { src: 'img/demo_bastidor.png', alt: 'Erick Giovane concentrado',        legenda: 'Bastidor' },
   ],
 
   // ── RESULTADOS ────────────────────────────────────────────────
