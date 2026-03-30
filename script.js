@@ -78,7 +78,8 @@ async function renderSiteData() {
   
   if (galleryGrid && data.galeria) {
     // 1. Coleta categorias únicas
-    const cats = ['all', ...new Set(data.galeria.filter(i => i.src).map(i => i.legenda).filter(Boolean))];
+    const rawCats = data.galeria.filter(i => i.src).map(i => i.legenda || 'Geral');
+    const cats = ['all', ...new Set(rawCats)];
     
     // 2. Renderiza filtros
     if (galleryFilters) {
@@ -105,11 +106,13 @@ async function renderSiteData() {
     galleryGrid.innerHTML = data.galeria.map((item, i) => {
       const isLarge = i === 0;
       const hasImg  = item.src && item.src.length > 0;
+      const displayCat = item.legenda || 'Geral';
+      
       return `
         <div class="gallery-item${isLarge ? ' gallery-item--large' : ''}" 
-             data-category="${escHtml(item.legenda || 'Geral')}"
+             data-category="${escHtml(displayCat)}"
              role="listitem" 
-             aria-label="${escHtml(item.alt || item.legenda || 'Foto do atleta')}">
+             aria-label="${escHtml(item.alt || displayCat || 'Foto do atleta')}">
           ${hasImg
             ? `<img
                 src="${escHtml(item.src)}"
@@ -118,11 +121,11 @@ async function renderSiteData() {
                 loading="lazy"
               />
               <div class="gallery-overlay">
-                <span class="gallery-cat">${escHtml(item.legenda || 'Momento')}</span>
+                <span class="gallery-cat">${escHtml(displayCat)}</span>
                 <span class="gallery-text">${escHtml(item.alt || 'Erick Giovane')}</span>
               </div>`
             : `<div class="gallery-placeholder gp-${(i % 6) + 1}">
-                <span class="gallery-label">${escHtml(item.legenda || 'Em breve')}</span>
+                <span class="gallery-label">${escHtml(displayCat || 'Em breve')}</span>
                </div>`
           }
         </div>

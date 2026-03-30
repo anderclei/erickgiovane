@@ -437,6 +437,13 @@ async function handleBulkUpload(e) {
   let usedStorage   = false;
   let usedBase64    = false;
 
+  // Pega a primeira categoria disponível como default
+  const availableCats = (adminData.galeriaCategorias || 'Competição, Treino, Bastidores')
+    .split(',')
+    .map(c => c.trim())
+    .filter(Boolean);
+  const defaultCat = availableCats[0] || '';
+
   for (const file of files) {
     statusText.textContent = `Enviando: ${file.name} (${uploadedCount + 1}/${files.length})`;
 
@@ -457,9 +464,8 @@ async function handleBulkUpload(e) {
           src = publicUrl;
           usedStorage = true;
         } else {
-          // Qualquer erro no Storage → fallback base64
+          // Erro no Storage → fallback base64
           console.warn('[upload] Storage falhou, usando base64:', error.message);
-          usedBase64 = true;
         }
       }
 
@@ -472,7 +478,7 @@ async function handleBulkUpload(e) {
       adminData.galeria.push({
         src,
         alt:    file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
-        legenda: '',
+        legenda: defaultCat,
       });
 
       uploadedCount++;
@@ -486,23 +492,18 @@ async function handleBulkUpload(e) {
     }
   }
 
-  let doneMsg = `✓ ${uploadedCount} foto(s) prontas!`;
-  if (usedBase64 && !usedStorage) {
-    statusText.innerHTML = `✓ Upload concluído via base64. <strong style="color:var(--c-accent)">Para melhor performance, crie o bucket "gallery" no Supabase Storage.</strong>`;
-  } else if (usedBase64 && usedStorage) {
-    statusText.textContent = `✓ Upload misto (algumas via Storage, outras em base64).`;
-  } else {
-    statusText.textContent = `✓ Upload concluído via Supabase Storage!`;
-  }
-
   statusText.textContent = '✓ Upload concluído!';
   setTimeout(async () => {
     container.style.display = 'none';
     bar.style.width = '0%';
     renderGaleriaEditor();
-    showToast(`${uploadedCount} foto(s) adicionadas! Salvando...`);
-    await saveAll(); // Auto-save after bulk upload
-  }, 2500);
+    
+    let msg = `${uploadedCount} foto(s) adicionadas!`;
+    if (usedBase64) msg += ' (Nota: algumas salvas localmente devido à falha no storage)';
+    showToast(`${msg} Salvando tudo...`);
+    
+    await saveAll();
+  }, 2000);
 
   e.target.value = '';
 }
@@ -515,7 +516,7 @@ function renderGaleriaEditor() {
   container.innerHTML = '';
   countEl.textContent = `${adminData.galeria.length}`;
 
-  const availableCats = (adminData.galeriaCategorias || '')
+  const availableCats = (adminData.galeriaCategorias || 'Competição, Treino, Bastidores')
     .split(',')
     .map(c => c.trim())
     .filter(Boolean);
@@ -528,7 +529,7 @@ function renderGaleriaEditor() {
   adminData.galeria.forEach((item, i) => {
     const div = document.createElement('div');
     div.className = 'gallery-editor-item';
-    div.style.background = 'var(--c-surface-light)';
+    div.style.background = 'rgba(255,255,255,0.05)';
     div.style.border = '1px solid var(--c-border)';
     div.style.borderRadius = 'var(--radius-md)';
     div.style.padding = '1rem';
@@ -543,50 +544,83 @@ function renderGaleriaEditor() {
       <div style="position:relative; aspect-ratio: 16/10; margin-bottom:1rem; border-radius: var(--radius-sm); overflow:hidden; background:rgba(0,0,0,0.2)">
         ${hasImg
           ? `<img src="${escHtml(item.src)}" style="width:100%; height:100%; object-fit:cover" loading="lazy" />`
-          : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--c-muted); font-size:0.8rem">Sem imagem</div>`
+          : `<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; color:var(--c-muted); font-size:0.8rem">
+               <span style="font-size:1.5rem; margin-bottom:0.5rem">📷</span>
+               Sem imagem
+             </div>`
         }
-        <button class="adm-btn adm-btn--danger" data-remove="${i}" style="position:absolute; top:0.5rem; right:0.5rem; width:30px; height:30px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.4)">✕</button>
+        <button class="adm-btn adm-btn--danger" data-remove="${i}" style="position:absolute; top:0.5rem; right:0.5rem; width:30px; height:30px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.4); z-index:10" title="Remover item">✕</button>
+        
+        <label class="adm-btn adm-btn--ghost" style="position:absolute; bottom:0.5rem; left:0.5rem; right:0.5rem; padding:0.4rem; font-size:0.7rem; cursor:pointer; background:rgba(10,22,40,0.7); backdrop-filter:blur(4px); z-index:10">
+          🖼️ Alterar imagem
+          <input type="file" class="gallery-item-upload" accept="image/*" data-idx="${i}" style="display:none" />
+        </label>
       </div>
 
       <div class="gallery-editor-fields">
         <div style="margin-bottom:0.75rem">
           <label style="font-size:0.65rem; text-transform:uppercase; color:var(--c-muted); display:block; margin-bottom:0.25rem">Categoria (Álbum)</label>
-          <select class="adm-input" data-idx="${i}" data-field="legenda" style="width:100%">
+          <select class="adm-input" data-idx="${i}" data-field="legenda" style="width:100%; padding:0.4rem; font-size:0.85rem">
             <option value="">Sem categoria</option>
             ${catOptions}
           </select>
         </div>
         <div>
           <label style="font-size:0.65rem; text-transform:uppercase; color:var(--c-muted); display:block; margin-bottom:0.25rem">Texto Alt / Descrição</label>
-          <input type="text" class="adm-input" placeholder="O que aparece na foto?" value="${escHtml(item.alt)}" data-idx="${i}" data-field="alt" style="width:100%" />
+          <input type="text" class="adm-input" placeholder="O que aparece na foto?" value="${escHtml(item.alt)}" data-idx="${i}" data-field="alt" style="width:100%; padding:0.4rem; font-size:0.85rem" />
         </div>
       </div>
     `;
     container.appendChild(div);
   });
 
-  // Event Listeners
+  // Event Listeners para Campos de Texto e Select
   container.querySelectorAll('input[data-field], select[data-field]').forEach(input => {
     input.addEventListener('input', (e) => {
       const { idx, field } = e.target.dataset;
       adminData.galeria[+idx][field] = e.target.value;
-      if (field === 'src') renderGaleriaEditor(); // Refresh thumb
     });
   });
 
-  container.querySelectorAll('.gallery-upload').forEach(input => {
+  // Event Listeners para Upload Individual
+  container.querySelectorAll('.gallery-item-upload').forEach(input => {
     input.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       const idx  = +e.target.dataset.idx;
       if (!file) return;
+
       try {
-        const dataUrl = await readFileAsDataURL(file);
-        adminData.galeria[idx].src = dataUrl;
+        showToast('Substituindo imagem...');
+        const client = sb();
+        let src = null;
+
+        if (client) {
+          const fileExt  = file.name.split('.').pop();
+          const fileName = `item_${Date.now()}.${fileExt}`;
+          const filePath = `public/${fileName}`;
+
+          const { error } = await client.storage.from('gallery').upload(filePath, file);
+          if (!error) {
+            const { data: { publicUrl } } = client.storage.from('gallery').getPublicUrl(filePath);
+            src = publicUrl;
+          }
+        }
+
+        if (!src) {
+          src = await readFileAsDataURL(file);
+        }
+
+        adminData.galeria[idx].src = src;
         renderGaleriaEditor();
-      } catch (err) { console.error(err); }
+        showToast('Imagem atualizada! Lembre-se de salvar.');
+      } catch (err) {
+        console.error(err);
+        showToast('Erro ao atualizar imagem.');
+      }
     });
   });
 
+  // Event Listeners para Remover
   container.querySelectorAll('[data-remove]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const idx = +e.currentTarget.dataset.remove;
@@ -679,9 +713,10 @@ async function saveAll() {
     }
   } catch (err) {
     if (err.name === 'QuotaExceededError') {
-      showToast('⚠ Armazenamento cheio! Reduza o tamanho das imagens.');
+      showToast('⚠ Armazenamento cheio no navegador! Tente usar imagens menores.');
     } else {
-      showToast('Erro ao salvar. Tente novamente.');
+      const msg = err.message || 'Erro desconhecido ao salvar.';
+      showToast('❌ Erro ao salvar: ' + msg);
       console.error(err);
     }
   } finally {
