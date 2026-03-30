@@ -789,113 +789,7 @@ textarea:focus-visible {
 /* ============================================================
    MEU JOGO
 ============================================================ */
-/* Gallery Filters */
-.gallery-filters {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-bottom: 3rem;
-}
-
-.filter-btn {
-  background: transparent;
-  color: var(--c-text-muted);
-  border: 1px solid var(--c-border);
-  padding: 0.6rem 1.5rem;
-  border-radius: var(--radius-pill);
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.3s var(--ease-smooth);
-}
-
-.filter-btn:hover {
-  border-color: var(--c-text-dim);
-  color: var(--c-text);
-}
-
-.filter-btn.active {
-  background: var(--c-accent);
-  color: var(--c-primary);
-  border-color: var(--c-accent);
-  box-shadow: 0 4px 15px var(--c-accent-glow);
-}
-
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  grid-auto-rows: 280px;
-  gap: 1.5rem;
-  min-height: 400px;
-}
-
-.gallery-item {
-  position: relative;
-  aspect-ratio: 4/5;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  background: var(--c-surface);
-  transition: all 0.6s var(--ease-smooth);
-}
-
-.gallery-item.hide {
-  opacity: 0;
-  transform: scale(0.9);
-  pointer-events: none;
-  position: absolute;
-}
-
-.gallery-item--large {
-  grid-column: span 2;
-  grid-row: span 2;
-  aspect-ratio: 1/1;
-}
-
-.gallery-real-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.8s var(--ease-smooth);
-}
-
-.gallery-item:hover .gallery-real-img {
-  transform: scale(1.1);
-}
-
-.gallery-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(10, 22, 40, 0.9) 0%, transparent 60%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 1.5rem;
-  opacity: 0;
-  transition: opacity 0.4s var(--ease-smooth);
-}
-
-.gallery-item:hover .gallery-overlay {
-  opacity: 1;
-}
-
-.gallery-cat {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--c-accent);
-  margin-bottom: 0.25rem;
-}
-
-.gallery-text {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  color: var(--c-text);
-  line-height: 1.2;
-}
+/* A Galeria foi consolidada na linha 1200 para evitar conflitos */
 
 /* Lightbox Simple */
 .lightbox {
@@ -1196,79 +1090,151 @@ textarea:focus-visible {
 /* ============================================================
    GALERIA
 ============================================================ */
-.galeria {
-  background: var(--c-surface);
+/* --- GALERIA: FILTROS --- */
+.gallery-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 3rem;
 }
 
-/* A definição da grid foi movida para cima para manter organização */
+.filter-btn {
+  background: transparent;
+  color: var(--c-text-muted);
+  border: 1px solid var(--c-border);
+  padding: 0.6rem 1.5rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s var(--ease-smooth);
+}
+
+.filter-btn:hover {
+  border-color: var(--c-text-dim);
+  color: var(--c-text);
+}
+
+.filter-btn.active {
+  background: var(--c-accent);
+  color: var(--c-primary);
+  border-color: var(--c-accent);
+  box-shadow: 0 4px 15px var(--c-accent-glow);
+}
+
+/* --- GALERIA: GRID --- */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 250px;
+  gap: 1.5rem;
+  min-height: 400px;
+}
 
 .gallery-item {
-  overflow: hidden;
-  border-radius: var(--radius-md);
   position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--c-surface);
+  transition: transform 0.6s var(--ease-smooth), opacity 0.4s ease;
+  cursor: pointer;
 }
 
+.gallery-item.hide {
+  display: none; /* Evita sobreposição ao filtrar */
+}
+
+/* Item de destaque (primeiro) */
 .gallery-item--large {
+  grid-column: span 2;
   grid-row: span 2;
 }
 
+/* Imagens */
+.gallery-real-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s var(--ease-smooth);
+}
+
+.gallery-item:hover .gallery-real-img {
+  transform: scale(1.08);
+}
+
+/* Overlay Info */
+.gallery-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 22, 40, 0.95) 0%, transparent 70%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.5rem;
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-smooth);
+}
+
+.gallery-item:hover .gallery-overlay {
+  opacity: 1;
+}
+
+.gallery-cat {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--c-accent);
+  margin-bottom: 0.25rem;
+}
+
+.gallery-text {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--c-text);
+  line-height: 1.2;
+}
+
+/* Placeholders decorativos */
 .gallery-placeholder {
   width: 100%;
   height: 100%;
-  position: relative;
-  overflow: hidden;
-  transition: transform 0.5s var(--ease-smooth);
-}
-
-.gallery-item:hover .gallery-placeholder {
-  transform: scale(1.04);
-}
-
-.gp-1 { background: linear-gradient(135deg, #0d2035 0%, #1C2B3A 100%); }
-.gp-2 { background: linear-gradient(135deg, #0A1628 0%, #162338 100%); }
-.gp-3 { background: linear-gradient(135deg, #1C2B3A 0%, #243344 100%); }
-.gp-4 { background: linear-gradient(135deg, #0d2035 0%, #12293a 100%); }
-.gp-5 { background: linear-gradient(135deg, #162338 0%, #1C2B3A 100%); }
-.gp-6 { background: linear-gradient(135deg, #0A1628 0%, #1a2f42 100%); }
-
-.gallery-placeholder::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 12px,
-      rgba(170, 255, 0, 0.015) 12px,
-      rgba(170, 255, 0, 0.015) 13px
-    );
-}
-
-/* Decorative tennis ball / court icon inside placeholder */
-.gallery-placeholder::after {
-  content: '🎾';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -60%);
-  font-size: 2.5rem;
-  opacity: 0.08;
-  filter: grayscale(1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .gallery-label {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 1rem;
-  background: linear-gradient(to top, rgba(10,22,40,0.9) 0%, transparent 100%);
-  font-size: 0.75rem;
+  bottom: 1rem;
+  left: 1rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
   color: var(--c-text-muted);
+  text-transform: uppercase;
+}
+
+/* --- RESPONSIVIDADE GALERIA --- */
+@media (max-width: 992px) {
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 220px;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 250px;
+  }
+  .gallery-item--large {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
 }
 
 /* ============================================================
@@ -1820,18 +1786,7 @@ textarea:focus-visible {
     max-width: 100%;
   }
 
-  /* Galeria mobile */
-  .gallery-grid {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto;
-  }
-  .gallery-item--large {
-    grid-column: span 2;
-    height: 240px;
-  }
-  .gallery-item {
-    height: 160px;
-  }
+  /* Galeria mobile consolidada */
 
   /* Cotas mobile */
   .cotas-grid {
@@ -1866,18 +1821,7 @@ textarea:focus-visible {
     font-size: clamp(3.5rem, 20vw, 6rem);
   }
 
-  .gallery-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .gallery-item--large {
-    grid-column: span 1;
-    height: 220px;
-  }
-
-  .gallery-item {
-    height: 180px;
-  }
+  /* Galeria small mobile consolidada */
 
   .metrics-grid {
     grid-template-columns: 1fr 1fr;
@@ -1935,33 +1879,7 @@ textarea:focus-visible {
   opacity: 0.6;
 }
 
-/* ── Real gallery images ──────────────────────────────────── */
-.gallery-real-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  display: block;
-  transition: transform 0.5s var(--ease-smooth);
-}
-.gallery-item:hover .gallery-real-img {
-  transform: scale(1.04);
-}
-.gallery-item .gallery-label {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 0.875rem 1rem;
-  background: linear-gradient(to top, rgba(10,22,40,0.9) 0%, transparent 100%);
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--c-text-muted);
-  pointer-events: none;
-  z-index: 2;
-}
+/* As classes auxiliares de imagem foram unificadas no bloco da galeria */
 
 /* ── Position badge variants ──────────────────────────────── */
 .position-badge--gold {
