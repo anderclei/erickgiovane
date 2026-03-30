@@ -271,9 +271,13 @@ function escHtml(str) {
 // INIT — espera DOM estar pronto
 // ─────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async () => {
-  await renderSiteData();
-  initReveal();
+  // Initialize UI components first (doesn't depend on data)
   initHeader();
   initMobileNav();
-  initForm();
+  
+  // Then start loading data and other interactive elements
+  renderSiteData().then(() => {
+    initReveal();
+    initForm();
+  });
 });
