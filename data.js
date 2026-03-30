@@ -7,7 +7,7 @@
  */
 
 // Incrementar este número limpa o cache do localStorage automaticamente
-const CACHE_VERSION = '2';
+const CACHE_VERSION = '3';
 const CACHE_VERSION_KEY = 'erickSiteDataVersion';
 
 // Limpa localStorage se a versão mudou

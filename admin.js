@@ -387,8 +387,14 @@ function fillGaleriaTab() {
     catField.value = adminData.galeriaCategorias || '';
     catField.addEventListener('input', (e) => {
       adminData.galeriaCategorias = e.target.value;
-      renderGaleriaEditor(); // Re-render to update selects
+      renderGaleriaEditor(); 
     });
+  }
+
+  // Bulk Upload
+  const bulkInput = document.getElementById('bulkUploadInput');
+  if (bulkInput) {
+    bulkInput.addEventListener('change', handleBulkUpload);
   }
 
   renderGaleriaEditor();
@@ -396,6 +402,76 @@ function fillGaleriaTab() {
     adminData.galeria.push({ src: '', alt: '', legenda: '' });
     renderGaleriaEditor();
   });
+}
+
+async function handleBulkUpload(e) {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+
+  const container = document.getElementById('uploadProgressContainer');
+  const bar       = document.getElementById('uploadProgressBar');
+  const percentText = document.getElementById('uploadPercentage');
+  const statusText  = document.getElementById('uploadStatusText');
+
+  container.style.display = 'block';
+  let uploadedCount = 0;
+
+  for (const file of files) {
+    statusText.textContent = `Enviando: ${file.name} (${uploadedCount + 1}/${files.length})`;
+    
+    try {
+      // 1. Upload for Storage do Supabase
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+      const filePath = `public/${fileName}`;
+
+      const { data, error } = await sb().storage
+        .from('gallery')
+        .upload(filePath, file);
+
+      if (error) {
+        if (error.message.includes('bucket not found')) {
+           // Fallback para base64 se o bucket não existir (evita quebrar, mas avisa)
+           console.warn('Bucket "gallery" não encontrado. Usando fallback base64.');
+           const dataUrl = await readFileAsDataURL(file);
+           adminData.galeria.push({ src: dataUrl, alt: file.name.split('.')[0], legenda: '' });
+        } else {
+           throw error;
+        }
+      } else {
+        // 2. Pega a URL pública
+        const { data: { publicUrl } } = sb().storage
+          .from('gallery')
+          .getPublicUrl(filePath);
+
+        // 3. Adiciona na galeria
+        adminData.galeria.push({ 
+          src: publicUrl, 
+          alt: file.name.split('.')[0], 
+          legenda: '' 
+        });
+      }
+
+      uploadedCount++;
+      const progress = Math.round((uploadedCount / files.length) * 100);
+      bar.style.width = `${progress}%`;
+      percentText.textContent = `${progress}%`;
+
+    } catch (err) {
+      console.error('Erro no upload:', err);
+      showToast(`Erro ao enviar ${file.name}`);
+    }
+  }
+
+  statusText.textContent = '✓ Upload concluído!';
+  setTimeout(() => {
+    container.style.display = 'none';
+    bar.style.width = '0%';
+    renderGaleriaEditor();
+    showToast(`${uploadedCount} fotos adicionadas! Não esqueça de Salvar.`);
+  }, 2000);
+
+  e.target.value = ''; // Limpa input
 }
 
 function renderGaleriaEditor() {
@@ -411,42 +487,45 @@ function renderGaleriaEditor() {
     .map(c => c.trim())
     .filter(Boolean);
 
+  // Layout em Grid para o Editor
+  container.style.display = 'grid';
+  container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(280px, 1fr))';
+  container.style.gap = '1.5rem';
+
   adminData.galeria.forEach((item, i) => {
     const div = document.createElement('div');
     div.className = 'gallery-editor-item';
+    div.style.background = 'var(--c-surface-light)';
+    div.style.border = '1px solid var(--c-border)';
+    div.style.borderRadius = 'var(--radius-md)';
+    div.style.padding = '1rem';
+    div.style.position = 'relative';
 
     const hasImg = item.src && item.src.length > 0;
-    
-    // Create categories options
     const catOptions = availableCats.map(c => 
       `<option value="${escHtml(c)}" ${item.legenda === c ? 'selected' : ''}>${escHtml(c)}</option>`
     ).join('');
 
     div.innerHTML = `
-      ${hasImg
-        ? `<img class="gallery-editor-thumb" src="${escHtml(item.src)}" alt="${escHtml(item.alt)}" loading="lazy" />`
-        : `<div class="gallery-thumb-placeholder">Sem imagem</div>`
-      }
+      <div style="position:relative; aspect-ratio: 16/10; margin-bottom:1rem; border-radius: var(--radius-sm); overflow:hidden; background:rgba(0,0,0,0.2)">
+        ${hasImg
+          ? `<img src="${escHtml(item.src)}" style="width:100%; height:100%; object-fit:cover" loading="lazy" />`
+          : `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--c-muted); font-size:0.8rem">Sem imagem</div>`
+        }
+        <button class="adm-btn adm-btn--danger" data-remove="${i}" style="position:absolute; top:0.5rem; right:0.5rem; width:30px; height:30px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:50%; box-shadow:0 2px 8px rgba(0,0,0,0.4)">✕</button>
+      </div>
+
       <div class="gallery-editor-fields">
-        <div style="display:flex;gap:.5rem;margin-bottom:.5rem">
-          <div style="flex:1">
-            <label style="font-size:.65rem;text-transform:uppercase;color:var(--c-muted)">Categoria</label>
-            <select class="adm-input" data-idx="${i}" data-field="legenda" style="margin-top:.2rem">
-              <option value="">Sem categoria</option>
-              ${catOptions}
-            </select>
-          </div>
-          <div style="width:100px">
-            <label style="font-size:.65rem;text-transform:uppercase;color:var(--c-muted)">Upload</label>
-            <input type="file" accept="image/*" class="file-input gallery-upload" data-idx="${i}" style="margin-top:.2rem" />
-          </div>
+        <div style="margin-bottom:0.75rem">
+          <label style="font-size:0.65rem; text-transform:uppercase; color:var(--c-muted); display:block; margin-bottom:0.25rem">Categoria (Álbum)</label>
+          <select class="adm-input" data-idx="${i}" data-field="legenda" style="width:100%">
+            <option value="">Sem categoria</option>
+            ${catOptions}
+          </select>
         </div>
-        <div class="gallery-editor-row" style="margin-bottom:.5rem">
-          <input type="text" placeholder="URL da Foto" value="${escHtml(item.src)}" data-idx="${i}" data-field="src" />
-        </div>
-        <div class="gallery-editor-row">
-          <input type="text" placeholder="Texto Alternativo (Alt)" value="${escHtml(item.alt)}" data-idx="${i}" data-field="alt" />
-          <button class="adm-btn adm-btn--danger" data-remove="${i}" style="padding:.2rem .4rem">✕</button>
+        <div>
+          <label style="font-size:0.65rem; text-transform:uppercase; color:var(--c-muted); display:block; margin-bottom:0.25rem">Texto Alt / Descrição</label>
+          <input type="text" class="adm-input" placeholder="O que aparece na foto?" value="${escHtml(item.alt)}" data-idx="${i}" data-field="alt" style="width:100%" />
         </div>
       </div>
     `;
