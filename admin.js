@@ -236,6 +236,15 @@ function fillHeroTab() {
 
   document.getElementById('heroTagline').addEventListener('input',  (e) => { adminData.hero.tagline  = e.target.value; });
   document.getElementById('heroSubtitle').addEventListener('input', (e) => { adminData.hero.subtitle = e.target.value; });
+
+  const removeBtn = document.getElementById('removeHeroBgBtn');
+  if (removeBtn) {
+    removeBtn.addEventListener('click', () => {
+      adminData.hero.bgImage = '';
+      urlField.value = '';
+      updatePreview('');
+    });
+  }
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -277,6 +286,16 @@ function fillAtletaTab() {
         urlField.value = '(imagem carregada)';
         updatePreview(dataUrl);
       } catch (err) { console.error(err); }
+    });
+  }
+
+  // Remove
+  const removeBtn = document.getElementById('removeAtletaImgBtn');
+  if (removeBtn) {
+    removeBtn.addEventListener('click', () => {
+      adminData.hero.athleteImage = '';
+      urlField.value = '';
+      updatePreview('');
     });
   }
 }
@@ -476,12 +495,14 @@ async function handleBulkUpload(e) {
     statusText.textContent = `✓ Upload concluído via Supabase Storage!`;
   }
 
-  setTimeout(() => {
+  statusText.textContent = '✓ Upload concluído!';
+  setTimeout(async () => {
     container.style.display = 'none';
     bar.style.width = '0%';
     renderGaleriaEditor();
-    showToast(`${uploadedCount} foto(s) adicionadas! Clique em Salvar.`);
-  }, 3000);
+    showToast(`${uploadedCount} foto(s) adicionadas! Salvando...`);
+    await saveAll(); // Auto-save after bulk upload
+  }, 2500);
 
   e.target.value = '';
 }

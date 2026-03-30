@@ -103,7 +103,10 @@
             </div>
             <div class="adm-form-group">
               <label for="heroImageUrl">Ou URL da imagem</label>
-              <input type="text" id="heroImageUrl" placeholder="img/foto2.jpg ou https://..." />
+              <div style="display:flex; gap:0.5rem">
+                <input type="text" id="heroImageUrl" placeholder="img/foto2.jpg ou https://..." style="flex:1" />
+                <button class="adm-btn adm-btn--danger" id="removeHeroBgBtn" title="Remover imagem" style="padding:0 0.75rem">✕</button>
+              </div>
               <p class="field-hint">Caminho relativo ou URL externa</p>
             </div>
           </div>
@@ -140,7 +143,10 @@
             </div>
             <div class="adm-form-group">
               <label for="atletaImageUrl">Ou caminho/URL</label>
-              <input type="text" id="atletaImageUrl" placeholder="img/hero_atleta.png" />
+              <div style="display:flex; gap:0.5rem">
+                <input type="text" id="atletaImageUrl" placeholder="img/hero_atleta.png" style="flex:1" />
+                <button class="adm-btn adm-btn--danger" id="removeAtletaImgBtn" title="Remover imagem" style="padding:0 0.75rem">✕</button>
+              </div>
               <p class="field-hint">Caminho relativo ou URL externa</p>
             </div>
           </div>
