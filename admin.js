@@ -423,6 +423,45 @@ function fillGaleriaTab() {
   });
 }
 
+/**
+ * Redimensiona e comprime uma foto para evitar payloads gigantes no Supabase
+ * @param {File} file 
+ * @param {number} maxWidth 
+ * @param {number} quality (0 to 1)
+ */
+function compressImage(file, maxWidth = 1200, quality = 0.8) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        
+        canvas.toBlob((blob) => {
+          if (!blob) return reject(new Error('Falha na compressão'));
+          resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+        }, 'image/jpeg', quality);
+      };
+      img.onerror = reject;
+    };
+    reader.onerror = reject;
+  });
+}
+
 async function handleBulkUpload(e) {
   const files = Array.from(e.target.files);
   if (!files.length) return;
@@ -434,10 +473,8 @@ async function handleBulkUpload(e) {
 
   container.style.display = 'block';
   let uploadedCount = 0;
-  let usedStorage   = false;
-  let usedBase64    = false;
+  let hasErrors     = false;
 
-  // Pega a primeira categoria disponível como default
   const availableCats = (adminData.galeriaCategorias || 'Competição, Treino, Bastidores')
     .split(',')
     .map(c => c.trim())
@@ -445,34 +482,34 @@ async function handleBulkUpload(e) {
   const defaultCat = availableCats[0] || '';
 
   for (const file of files) {
-    statusText.textContent = `Enviando: ${file.name} (${uploadedCount + 1}/${files.length})`;
+    statusText.textContent = `Preparando: ${file.name} (${uploadedCount + 1}/${files.length})`;
 
     try {
+      // 1. Comprime a imagem antes de qualquer coisa
+      const compressedFile = await compressImage(file);
+      
       const client = sb();
       let src = null;
 
       if (client) {
-        // Tenta Supabase Storage
-        const fileExt  = file.name.split('.').pop();
+        statusText.textContent = `Enviando para Nuvem: ${file.name}...`;
+        const fileExt  = 'jpg';
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
         const filePath = `public/${fileName}`;
 
-        const { error } = await client.storage.from('gallery').upload(filePath, file);
+        const { error } = await client.storage.from('gallery').upload(filePath, compressedFile);
 
         if (!error) {
           const { data: { publicUrl } } = client.storage.from('gallery').getPublicUrl(filePath);
           src = publicUrl;
-          usedStorage = true;
         } else {
-          // Erro no Storage → fallback base64
           console.warn('[upload] Storage falhou, usando base64:', error.message);
         }
       }
 
       if (!src) {
-        // Fallback: converte para base64
-        src = await readFileAsDataURL(file);
-        usedBase64 = true;
+        // Fallback: base64 da imagem já comprimida
+        src = await readFileAsDataURL(compressedFile);
       }
 
       adminData.galeria.push({
@@ -488,22 +525,22 @@ async function handleBulkUpload(e) {
 
     } catch (err) {
       console.error('Erro no upload:', err);
-      showToast(`Erro ao enviar ${file.name}`);
+      hasErrors = true;
     }
   }
 
-  statusText.textContent = '✓ Upload concluído!';
-  setTimeout(async () => {
+  statusText.textContent = hasErrors ? '✓ Concluído com avisos' : '✓ Upload concluído!';
+  
+  // Salva imediatamente para evitar perda se o usuário fechar a aba
+  renderGaleriaEditor();
+  showToast(hasErrors ? 'Algumas fotos falharam, salvando as outras...' : 'Fotos adicionadas! Salvando...');
+  
+  await saveAll();
+
+  setTimeout(() => {
     container.style.display = 'none';
     bar.style.width = '0%';
-    renderGaleriaEditor();
-    
-    let msg = `${uploadedCount} foto(s) adicionadas!`;
-    if (usedBase64) msg += ' (Nota: algumas salvas localmente devido à falha no storage)';
-    showToast(`${msg} Salvando tudo...`);
-    
-    await saveAll();
-  }, 2000);
+  }, 3000);
 
   e.target.value = '';
 }
@@ -514,6 +551,7 @@ function renderGaleriaEditor() {
   if (!container) return;
   
   container.innerHTML = '';
+  if (!adminData.galeria) adminData.galeria = [];
   countEl.textContent = `${adminData.galeria.length}`;
 
   const availableCats = (adminData.galeriaCategorias || 'Competição, Treino, Bastidores')
@@ -590,29 +628,27 @@ function renderGaleriaEditor() {
       if (!file) return;
 
       try {
-        showToast('Substituindo imagem...');
+        showToast('Substituindo...');
+        const compressed = await compressImage(file);
+        
         const client = sb();
         let src = null;
 
         if (client) {
-          const fileExt  = file.name.split('.').pop();
-          const fileName = `item_${Date.now()}.${fileExt}`;
+          const fileName = `item_${Date.now()}.jpg`;
           const filePath = `public/${fileName}`;
-
-          const { error } = await client.storage.from('gallery').upload(filePath, file);
+          const { error } = await client.storage.from('gallery').upload(filePath, compressed);
           if (!error) {
             const { data: { publicUrl } } = client.storage.from('gallery').getPublicUrl(filePath);
             src = publicUrl;
           }
         }
-
-        if (!src) {
-          src = await readFileAsDataURL(file);
-        }
+        if (!src) src = await readFileAsDataURL(compressed);
 
         adminData.galeria[idx].src = src;
         renderGaleriaEditor();
-        showToast('Imagem atualizada! Lembre-se de salvar.');
+        showToast('Imagem atualizada! Salvando...');
+        await saveAll();
       } catch (err) {
         console.error(err);
         showToast('Erro ao atualizar imagem.');
@@ -622,10 +658,11 @@ function renderGaleriaEditor() {
 
   // Event Listeners para Remover
   container.querySelectorAll('[data-remove]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', async (e) => {
       const idx = +e.currentTarget.dataset.remove;
       adminData.galeria.splice(idx, 1);
       renderGaleriaEditor();
+      await saveAll();
     });
   });
 }
