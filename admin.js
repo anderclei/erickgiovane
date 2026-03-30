@@ -408,53 +408,57 @@ async function handleBulkUpload(e) {
   const files = Array.from(e.target.files);
   if (!files.length) return;
 
-  const container = document.getElementById('uploadProgressContainer');
-  const bar       = document.getElementById('uploadProgressBar');
+  const container   = document.getElementById('uploadProgressContainer');
+  const bar         = document.getElementById('uploadProgressBar');
   const percentText = document.getElementById('uploadPercentage');
   const statusText  = document.getElementById('uploadStatusText');
 
   container.style.display = 'block';
   let uploadedCount = 0;
+  let usedStorage   = false;
+  let usedBase64    = false;
 
   for (const file of files) {
     statusText.textContent = `Enviando: ${file.name} (${uploadedCount + 1}/${files.length})`;
-    
+
     try {
-      // 1. Upload for Storage do Supabase
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
-      const filePath = `public/${fileName}`;
+      const client = sb();
+      let src = null;
 
-      const { data, error } = await sb().storage
-        .from('gallery')
-        .upload(filePath, file);
+      if (client) {
+        // Tenta Supabase Storage
+        const fileExt  = file.name.split('.').pop();
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+        const filePath = `public/${fileName}`;
 
-      if (error) {
-        if (error.message.includes('bucket not found')) {
-           // Fallback para base64 se o bucket não existir (evita quebrar, mas avisa)
-           console.warn('Bucket "gallery" não encontrado. Usando fallback base64.');
-           const dataUrl = await readFileAsDataURL(file);
-           adminData.galeria.push({ src: dataUrl, alt: file.name.split('.')[0], legenda: '' });
+        const { error } = await client.storage.from('gallery').upload(filePath, file);
+
+        if (!error) {
+          const { data: { publicUrl } } = client.storage.from('gallery').getPublicUrl(filePath);
+          src = publicUrl;
+          usedStorage = true;
         } else {
-           throw error;
+          // Qualquer erro no Storage → fallback base64
+          console.warn('[upload] Storage falhou, usando base64:', error.message);
+          usedBase64 = true;
         }
-      } else {
-        // 2. Pega a URL pública
-        const { data: { publicUrl } } = sb().storage
-          .from('gallery')
-          .getPublicUrl(filePath);
-
-        // 3. Adiciona na galeria
-        adminData.galeria.push({ 
-          src: publicUrl, 
-          alt: file.name.split('.')[0], 
-          legenda: '' 
-        });
       }
+
+      if (!src) {
+        // Fallback: converte para base64
+        src = await readFileAsDataURL(file);
+        usedBase64 = true;
+      }
+
+      adminData.galeria.push({
+        src,
+        alt:    file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
+        legenda: '',
+      });
 
       uploadedCount++;
       const progress = Math.round((uploadedCount / files.length) * 100);
-      bar.style.width = `${progress}%`;
+      bar.style.width        = `${progress}%`;
       percentText.textContent = `${progress}%`;
 
     } catch (err) {
@@ -463,15 +467,23 @@ async function handleBulkUpload(e) {
     }
   }
 
-  statusText.textContent = '✓ Upload concluído!';
+  let doneMsg = `✓ ${uploadedCount} foto(s) prontas!`;
+  if (usedBase64 && !usedStorage) {
+    statusText.innerHTML = `✓ Upload concluído via base64. <strong style="color:var(--c-accent)">Para melhor performance, crie o bucket "gallery" no Supabase Storage.</strong>`;
+  } else if (usedBase64 && usedStorage) {
+    statusText.textContent = `✓ Upload misto (algumas via Storage, outras em base64).`;
+  } else {
+    statusText.textContent = `✓ Upload concluído via Supabase Storage!`;
+  }
+
   setTimeout(() => {
     container.style.display = 'none';
     bar.style.width = '0%';
     renderGaleriaEditor();
-    showToast(`${uploadedCount} fotos adicionadas! Não esqueça de Salvar.`);
-  }, 2000);
+    showToast(`${uploadedCount} foto(s) adicionadas! Clique em Salvar.`);
+  }, 3000);
 
-  e.target.value = ''; // Limpa input
+  e.target.value = '';
 }
 
 function renderGaleriaEditor() {
