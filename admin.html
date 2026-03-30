@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · Erick Giovane</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+  <!-- ── LOGIN ──────────────────────────────────────────────── -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-logo">
+        <span class="login-brand">Erick Giovane</span>
+        <span class="login-sub">Painel Administrativo</span>
+      </div>
+      <form id="loginForm" novalidate>
+        <div class="adm-form-group">
+          <label for="loginPass">Senha de acesso</label>
+          <div class="password-wrap">
+            <input type="password" id="loginPass" placeholder="Digite a senha" autocomplete="current-password" />
+            <button type="button" class="toggle-pass" id="togglePass" aria-label="Mostrar senha">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <p class="login-error" id="loginError" aria-live="polite"></p>
+        <button type="submit" class="adm-btn adm-btn--primary adm-btn--full">Entrar</button>
+      </form>
+      <p class="login-hint">Senha padrão: <code>erick2025</code></p>
+    </div>
+  </div>
+
+  <!-- ── PAINEL ADMIN ───────────────────────────────────────── -->
+  <div class="admin-layout" id="adminPanel" hidden>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-brand">
+        <span class="sidebar-title">Admin</span>
+        <span class="sidebar-name">Erick Giovane</span>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Painel">
+        <ul>
+          <li><button class="sidebar-link active" data-tab="hero">🏆 Hero</button></li>
+          <li><button class="sidebar-link" data-tab="atleta">🎾 Foto do Atleta</button></li>
+          <li><button class="sidebar-link" data-tab="sobre">📖 Sobre</button></li>
+          <li><button class="sidebar-link" data-tab="jogo">🏟️ Meu Jogo</button></li>
+          <li><button class="sidebar-link" data-tab="galeria">🖼️ Galeria</button></li>
+          <li><button class="sidebar-link" data-tab="resultados">📊 Resultados</button></li>
+          <li><button class="sidebar-link" data-tab="contato">📞 Contato</button></li>
+          <li><button class="sidebar-link" data-tab="senha">🔐 Senha</button></li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="index.html" target="_blank" class="adm-btn adm-btn--ghost adm-btn--full">Ver site ↗</a>
+        <button class="sidebar-logout" id="logoutBtn" aria-label="Sair do painel">Sair</button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="admin-main" id="adminMain">
+
+      <!-- Top bar -->
+      <div class="admin-topbar">
+        <button class="sidebar-hamburger" id="sidebarToggle" aria-label="Abrir menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <h1 class="topbar-title" id="topbarTitle">Hero</h1>
+        <div class="topbar-actions">
+          <button class="adm-btn adm-btn--primary" id="globalSaveBtn">💾 Salvar alterações</button>
+        </div>
+      </div>
+
+      <!-- Toast / feedback -->
+      <div class="admin-toast" id="adminToast" aria-live="polite" role="status"></div>
+
+      <!-- ─── TAB: HERO ──────────────────────────────────────── -->
+      <section class="admin-tab active" id="tab-hero" aria-label="Configurações do Hero">
+
+        <div class="tab-section">
+          <h2 class="tab-section-title">Imagem de fundo</h2>
+          <div class="hero-preview-wrap">
+            <img id="heroPreviewImg" src="" alt="Prévia do hero" class="hero-preview-img" onerror="this.style.display='none'" />
+            <div class="hero-preview-placeholder" id="heroPreviewPlaceholder">Sem imagem selecionada</div>
+          </div>
+          <div class="adm-form-row">
+            <div class="adm-form-group">
+              <label for="heroImageUpload">Upload de imagem</label>
+              <input type="file" id="heroImageUpload" accept="image/*" class="file-input" />
+              <p class="field-hint">Formatos: JPG, PNG, WebP · A imagem é salva no navegador</p>
+            </div>
+            <div class="adm-form-group">
+              <label for="heroImageUrl">Ou URL da imagem</label>
+              <input type="text" id="heroImageUrl" placeholder="img/foto2.jpg ou https://..." />
+              <p class="field-hint">Caminho relativo ou URL externa</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-section">
+          <h2 class="tab-section-title">Textos do Hero</h2>
+          <div class="adm-form-group">
+            <label for="heroTagline">Tag (subtítulo do nome)</label>
+            <input type="text" id="heroTagline" placeholder="Atleta de Tênis · Arena Tennistorm · Masc. A" />
+          </div>
+          <div class="adm-form-group">
+            <label for="heroSubtitle">Subtítulo</label>
+            <textarea id="heroSubtitle" rows="3" placeholder="17 anos. 3 anos de evolução..."></textarea>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ─── TAB: FOTO DO ATLETA ───────────────────────────── -->
+      <section class="admin-tab" id="tab-atleta" aria-label="Foto do atleta no hero" hidden>
+        <div class="tab-section">
+          <h2 class="tab-section-title">Foto do atleta (lado direito do hero)</h2>
+          <p class="tab-desc">Esta foto aparece ao lado do nome na página principal. Recomendado: foto vertical, fundo escuro ou transparente.</p>
+          <div class="hero-preview-wrap" style="max-height:320px">
+            <img id="atletaPreviewImg" src="img/hero_atleta.png" alt="Prévia foto atleta" class="hero-preview-img" style="max-height:300px;object-fit:contain" onerror="this.style.display='none'" />
+            <div class="hero-preview-placeholder" id="atletaPreviewPlaceholder" style="display:none">Sem imagem selecionada</div>
+          </div>
+          <div class="adm-form-row">
+            <div class="adm-form-group">
+              <label for="atletaImageUpload">Upload da foto</label>
+              <input type="file" id="atletaImageUpload" accept="image/*" class="file-input" />
+              <p class="field-hint">Formatos: JPG, PNG, WebP · A imagem fica salva no navegador</p>
+            </div>
+            <div class="adm-form-group">
+              <label for="atletaImageUrl">Ou caminho/URL</label>
+              <input type="text" id="atletaImageUrl" placeholder="img/hero_atleta.png" />
+              <p class="field-hint">Caminho relativo ou URL externa</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── TAB: SOBRE ─────────────────────────────────────── -->
+      <section class="admin-tab" id="tab-sobre" aria-label="Configurações do Sobre" hidden>
+
+        <div class="tab-section">
+          <h2 class="tab-section-title">Texto da história</h2>
+          <div class="adm-form-group">
+            <label for="sobreP1">Parágrafo 1 (lead)</label>
+            <textarea id="sobreP1" rows="3"></textarea>
+          </div>
+          <div class="adm-form-group">
+            <label for="sobreP2">Parágrafo 2</label>
+            <textarea id="sobreP2" rows="3"></textarea>
+            <p class="field-hint">Use &lt;strong&gt;&lt;/strong&gt; para texto em negrito</p>
+          </div>
+          <div class="adm-form-group">
+            <label for="sobreP3">Parágrafo 3</label>
+            <textarea id="sobreP3" rows="3"></textarea>
+          </div>
+          <div class="adm-form-group">
+            <label for="sobreP4">Parágrafo 4</label>
+            <textarea id="sobreP4" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="tab-section">
+          <h2 class="tab-section-title">Cards de métricas</h2>
+          <div class="metrics-editor" id="metricsEditor">
+            <!-- gerado por JS -->
+          </div>
+          <button class="adm-btn adm-btn--ghost" id="addMetricBtn">+ Adicionar métrica</button>
+        </div>
+
+      </section>
+
+      <!-- ─── TAB: MEU JOGO ─────────────────────────────────── -->
+      <section class="admin-tab" id="tab-jogo" aria-label="Configurações do Meu Jogo" hidden>
+        <div class="tab-section">
+          <h2 class="tab-section-title">Texto introdutório</h2>
+          <div class="adm-form-group">
+            <label for="jogoIntro">Parágrafo de introdução</label>
+            <textarea id="jogoIntro" rows="4" placeholder="Meu jogo foi construído para..."></textarea>
+          </div>
+        </div>
+        <div class="tab-section">
+          <h2 class="tab-section-title">Cards de estilo</h2>
+          <div class="adm-form-grid">
+            <div class="adm-form-group">
+              <label for="jogoSuperficieValor">Superfície preferida</label>
+              <input type="text" id="jogoSuperficieValor" placeholder="Saibro" />
+            </div>
+            <div class="adm-form-group">
+              <label for="jogoSuperficieDesc">Descrição — Superfície</label>
+              <textarea id="jogoSuperficieDesc" rows="2"></textarea>
+            </div>
+            <div class="adm-form-group">
+              <label for="jogoEstiloValor">Estilo de jogo</label>
+              <input type="text" id="jogoEstiloValor" placeholder="Fundo de quadra agressivo" />
+            </div>
+            <div class="adm-form-group">
+              <label for="jogoEstiloDesc">Descrição — Estilo</label>
+              <textarea id="jogoEstiloDesc" rows="2"></textarea>
+            </div>
+            <div class="adm-form-group">
+              <label for="jogoGolpeValor">Golpe destaque</label>
+              <input type="text" id="jogoGolpeValor" placeholder="Forehand" />
+            </div>
+            <div class="adm-form-group">
+              <label for="jogoGolpeDesc">Descrição — Golpe</label>
+              <textarea id="jogoGolpeDesc" rows="2"></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ─── TAB: GALERIA ───────────────────────────────────── -->
+      <section class="admin-tab" id="tab-galeria" aria-label="Configurações da Galeria" hidden>
+
+        <div class="tab-section">
+          <h2 class="tab-section-title">Fotos da galeria <span class="badge-count" id="galleryCount">0/6</span></h2>
+          <p class="tab-desc">A primeira foto ocupa posição de destaque (tamanho duplo). Arraste para reordenar.</p>
+          <div class="gallery-editor" id="galleryEditor">
+            <!-- gerado por JS -->
+          </div>
+          <button class="adm-btn adm-btn--ghost" id="addGalleryItemBtn">+ Adicionar foto</button>
+        </div>
+
+      </section>
+
+      <!-- ─── TAB: RESULTADOS ────────────────────────────────── -->
+      <section class="admin-tab" id="tab-resultados" aria-label="Configurações dos Resultados" hidden>
+
+        <div class="tab-section">
+          <h2 class="tab-section-title">Tabela de competições</h2>
+          <div class="table-editor-wrapper">
+            <table class="table-editor" id="tableEditor">
+              <thead>
+                <tr>
+                  <th>Campeonato</th>
+                  <th>Modalidade</th>
+                  <th>Categoria</th>
+                  <th>Posição</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tableEditorBody">
+                <!-- gerado por JS -->
+              </tbody>
+            </table>
+          </div>
+          <button class="adm-btn adm-btn--ghost" id="addRowBtn">+ Adicionar linha</button>
+        </div>
+
+      </section>
+
+      <!-- ─── TAB: CONTATO ───────────────────────────────────── -->
+      <section class="admin-tab" id="tab-contato" aria-label="Configurações do Contato" hidden>
+
+        <div class="tab-section">
+          <h2 class="tab-section-title">Links de contato</h2>
+          <div class="adm-form-grid">
+            <div class="adm-form-group">
+              <label for="contatoWhatsapp">WhatsApp (somente números)</label>
+              <input type="text" id="contatoWhatsapp" placeholder="5544999999999" />
+              <p class="field-hint">Ex: 5544999999999 (código país + DDD + número)</p>
+            </div>
+            <div class="adm-form-group">
+              <label for="contatoEmail">E-mail</label>
+              <input type="email" id="contatoEmail" placeholder="erick@email.com" />
+            </div>
+            <div class="adm-form-group">
+              <label for="contatoInstagram">Link do Instagram</label>
+              <input type="url" id="contatoInstagram" placeholder="https://instagram.com/erickgiovane" />
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-section">
+          <h2 class="tab-section-title">Crédito do treinador</h2>
+          <div class="adm-form-grid">
+            <div class="adm-form-group">
+              <label for="contatoTreinador">Nome do treinador</label>
+              <input type="text" id="contatoTreinador" placeholder="Diego Tambori" />
+            </div>
+            <div class="adm-form-group">
+              <label for="contatoClube">Clube / Academia</label>
+              <input type="text" id="contatoClube" placeholder="Arena Tennistorm" />
+            </div>
+            <div class="adm-form-group">
+              <label for="contatoCidade">Cidade / UF</label>
+              <input type="text" id="contatoCidade" placeholder="Maringá, PR" />
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ─── TAB: SENHA ─────────────────────────────────────── -->
+      <section class="admin-tab" id="tab-senha" aria-label="Alterar senha" hidden>
+
+        <div class="tab-section">
+          <h2 class="tab-section-title">Alterar senha do painel</h2>
+          <div class="adm-form-group" style="max-width:400px">
+            <label for="senhaAtual">Senha atual</label>
+            <input type="password" id="senhaAtual" placeholder="Senha atual" />
+          </div>
+          <div class="adm-form-group" style="max-width:400px">
+            <label for="senhaNova">Nova senha</label>
+            <input type="password" id="senhaNova" placeholder="Mínimo 6 caracteres" />
+          </div>
+          <div class="adm-form-group" style="max-width:400px">
+            <label for="senhaConfirm">Confirmar nova senha</label>
+            <input type="password" id="senhaConfirm" placeholder="Repita a nova senha" />
+          </div>
+          <button class="adm-btn adm-btn--primary" id="changeSenhaBtn">Alterar senha</button>
+          <p class="senha-feedback" id="senhaFeedback" aria-live="polite"></p>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="data.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

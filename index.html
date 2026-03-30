@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Erick Giovane · Atleta de Tênis Profissional</title>
+  <meta name="description" content="Site oficial de Erick Giovane, atleta de tênis da Arena Tennistorm, Maringá-PR. Conheça sua história, resultados e oportunidades de patrocínio." />
+  <meta name="keywords" content="Erick Giovane, tenista, tênis, Arena Tennistorm, Maringá, patrocínio esportivo, FPT" />
+  <meta property="og:title" content="Erick Giovane · Atleta de Tênis" />
+  <meta property="og:description" content="Site oficial do atleta de tênis Erick Giovane — Arena Tennistorm · Masc. A" />
+  <meta property="og:type" content="website" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HEADER FIXO -->
+  <header class="site-header" id="top" role="banner">
+    <div class="container header-inner">
+      <a href="#top" class="logo" aria-label="Erick Giovane - Home">
+        <span class="logo-name">Erick Giovane</span>
+        <span class="logo-tag">Atleta de Tênis</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="main-nav" id="mainNav" role="navigation" aria-label="Menu principal">
+        <ul>
+          <li><a href="#sobre" class="nav-link">Sobre</a></li>
+          <li><a href="#jogo" class="nav-link">Jogo</a></li>
+          <li><a href="#resultados" class="nav-link">Resultados</a></li>
+          <li><a href="#galeria" class="nav-link">Galeria</a></li>
+          <li><a href="#contato" class="nav-link">Contato</a></li>
+        </ul>
+      </nav>
+      <a href="#patrocinio" class="btn btn-primary btn-sm header-cta" id="headerCta">Me Patrocine</a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ── HERO ─────────────────────────────────────────────── -->
+    <section class="hero" id="hero" aria-label="Apresentação do atleta">
+      <div class="hero-bg">
+        <div class="hero-overlay"></div>
+        <div class="hero-texture"></div>
+        <div class="hero-image-placeholder" id="heroBg" aria-hidden="true"></div>
+      </div>
+      <div class="container hero-content hero-split">
+
+        <!-- Coluna esquerda: texto -->
+        <div class="hero-text-col">
+          <div class="hero-tag reveal">
+            <span class="tag-dot"></span>
+            <span id="heroTagline">Atleta de Tênis · Arena Tennistorm · Masc. A</span>
+          </div>
+          <h1 class="hero-title reveal reveal-delay-1">
+            <span class="title-line">Erick</span>
+            <span class="title-line accent">Giovane</span>
+          </h1>
+          <p class="hero-subtitle reveal reveal-delay-2" id="heroSubtitle">
+            17 anos. 3 anos de evolução constante. Uma história que está sendo escrita dentro de quadra — e ainda tem muito capítulo pela frente.
+          </p>
+          <div class="hero-actions reveal reveal-delay-3">
+            <a href="#sobre" class="btn btn-ghost" id="heroStoryBtn">Conheça minha história</a>
+            <a href="#patrocinio" class="btn btn-primary" id="heroSponsorBtn">Me Patrocine</a>
+          </div>
+          <div class="hero-scroll-hint reveal reveal-delay-4" aria-hidden="true">
+            <span>Role para descobrir</span>
+            <div class="scroll-line"></div>
+          </div>
+        </div>
+
+        <!-- Coluna direita: foto do atleta -->
+        <!-- [EM BREVE] Substituir img/hero_atleta.png pela foto real editada com tom azul e elementos verdes -->
+        <div class="hero-img-col reveal reveal-delay-2" aria-hidden="true">
+          <div class="hero-athlete-frame">
+            <div class="hero-geo-accent geo-1"></div>
+            <div class="hero-geo-accent geo-2"></div>
+            <div class="hero-geo-accent geo-3"></div>
+            <img
+              src="img/hero_atleta.png"
+              alt="Erick Giovane em posição de jogo com raquete"
+              class="hero-athlete-img"
+              loading="eager"
+              onerror="this.closest('.hero-img-col').style.display='none'"
+            />
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── SOBRE ─────────────────────────────────────────────── -->
+    <section class="section sobre" id="sobre" aria-labelledby="sobreTitle">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label">A história</span>
+          <h2 class="section-title" id="sobreTitle">Quem é Erick Giovane</h2>
+        </div>
+        <div class="sobre-grid">
+          <div class="sobre-text reveal reveal-delay-1">
+            <p class="sobre-lead" id="sobreP1">O tênis entrou na minha vida aos 14 anos pelos caminhos que a família indica — e desde o primeiro dia eu soube que era isso.</p>
+            <p id="sobreP2">Nos últimos três anos venho construindo minha base com disciplina, treino diário e muita dedicação dentro da <strong>Arena Tennistorm</strong>, em Maringá, sob a orientação do professor <strong>Diego Tambori</strong>.</p>
+            <p id="sobreP3">Comecei na Masc. C, fui para a B, e hoje compito na <strong>Masc. A</strong> — tanto em simples quanto em duplas. Cada categoria superada foi uma confirmação de que o caminho é esse.</p>
+            <p id="sobreP4">A temporada que vem está desenhada para ser a melhor até aqui. O treino está mais intenso, a cabeça mais focada, e a vontade de vencer nunca foi tão grande.</p>
+            <blockquote class="quote-destaque reveal reveal-delay-2">
+              <span class="quote-mark">"</span>
+              Após conquistarmos o 3º lugar no Interclubes no ano passado, entro nesta temporada preparado para competir em simples e duplas, treinando diariamente com foco total. A expectativa é evoluir e buscar o 1º lugar.
+              <footer class="quote-author">— Erick Giovane</footer>
+            </blockquote>
+          </div>
+          <div class="sobre-metrics reveal reveal-delay-2">
+            <div class="metrics-grid" id="metricsGrid">
+              <!-- preenchido por JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MEU JOGO ──────────────────────────────────────────── -->
+    <section class="section jogo" id="jogo" aria-labelledby="jogoTitle">
+      <div class="jogo-bg" aria-hidden="true"></div>
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label">Estilo</span>
+          <h2 class="section-title" id="jogoTitle">Dentro de quadra</h2>
+        </div>
+        <p class="jogo-intro reveal reveal-delay-1">
+          Meu jogo foi construído para vencer no saibro. Jogo do fundo de quadra, com pressão constante e um forehand que define pontos. Cada treino é pensado para ampliar essa identidade.
+        </p>
+        <div class="jogo-cards reveal reveal-delay-2">
+
+          <!-- Card 1: Saibro — ícone de quadra de saibro (vista superior) -->
+          <div class="jogo-card" role="listitem">
+            <div class="jogo-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Quadra (retângulo externo) -->
+                <rect x="4" y="10" width="40" height="28" rx="1" stroke="#AAFF00" stroke-width="1.8"/>
+                <!-- Linha central vertical -->
+                <line x1="24" y1="10" x2="24" y2="38" stroke="#AAFF00" stroke-width="1.4"/>
+                <!-- Linha de serviço esquerda -->
+                <line x1="4" y1="24" x2="24" y2="24" stroke="#AAFF00" stroke-width="1.4"/>
+                <!-- Linha de serviço direita -->
+                <line x1="24" y1="24" x2="44" y2="24" stroke="#AAFF00" stroke-width="1.4"/>
+                <!-- Linha de serviço horizontal esquerda -->
+                <line x1="13" y1="10" x2="13" y2="38" stroke="#AAFF00" stroke-width="1" opacity=".5"/>
+                <!-- Linha de serviço horizontal direita -->
+                <line x1="35" y1="10" x2="35" y2="38" stroke="#AAFF00" stroke-width="1" opacity=".5"/>
+                <!-- Rede central -->
+                <line x1="4" y1="24" x2="44" y2="24" stroke="#AAFF00" stroke-width="2" opacity=".15"/>
+                <!-- Marca de quadra (círculo central) -->
+                <circle cx="24" cy="24" r="2" fill="#AAFF00" opacity=".8"/>
+                <!-- Textura saibro (pontos) -->
+                <circle cx="11" cy="18" r="0.8" fill="#AAFF00" opacity=".3"/>
+                <circle cx="17" cy="31" r="0.8" fill="#AAFF00" opacity=".3"/>
+                <circle cx="31" cy="16" r="0.8" fill="#AAFF00" opacity=".3"/>
+                <circle cx="37" cy="32" r="0.8" fill="#AAFF00" opacity=".3"/>
+              </svg>
+            </div>
+            <h3 class="jogo-card-title">Superfície preferida</h3>
+            <p class="jogo-card-value accent-text">Saibro</p>
+            <p class="jogo-card-desc">Superfície que potencializa meu estilo físico e minha consistência no rally.</p>
+          </div>
+
+          <!-- Card 2 (destaque): Fundo de quadra agressivo — bola + setas de pressão -->
+          <div class="jogo-card jogo-card--featured" role="listitem">
+            <div class="jogo-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Bola de tênis central -->
+                <circle cx="24" cy="24" r="9" stroke="#0A1628" stroke-width="2"/>
+                <path d="M16 20 Q24 24 32 20" stroke="#0A1628" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <path d="M16 28 Q24 24 32 28" stroke="#0A1628" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                <!-- Seta atacando da esquerda -->
+                <path d="M4 24 L14 24" stroke="#0A1628" stroke-width="2" stroke-linecap="round"/>
+                <path d="M11 20 L15 24 L11 28" stroke="#0A1628" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Setas de pressão (direita — resposta) -->
+                <path d="M34 24 L44 24" stroke="#0A1628" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="2 2" opacity=".6"/>
+                <!-- Raios de impacto -->
+                <line x1="24" y1="4" x2="24" y2="9" stroke="#0A1628" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+                <line x1="38" y1="10" x2="34.5" y2="13.5" stroke="#0A1628" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+                <line x1="10" y1="10" x2="13.5" y2="13.5" stroke="#0A1628" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+                <line x1="24" y1="44" x2="24" y2="39" stroke="#0A1628" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+              </svg>
+            </div>
+            <h3 class="jogo-card-title">Estilo de jogo</h3>
+            <p class="jogo-card-value">Fundo de quadra agressivo</p>
+            <p class="jogo-card-desc">Exercito pressão constante sobre o adversário, construindo pontos com consistência e explosão.</p>
+          </div>
+
+          <!-- Card 3: Forehand — raquete de tênis detalhada -->
+          <div class="jogo-card" role="listitem">
+            <div class="jogo-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Cabo da raquete -->
+                <rect x="30" y="33" width="5" height="12" rx="2.5" transform="rotate(-45 30 33)" stroke="#AAFF00" stroke-width="1.8" fill="none"/>
+                <!-- Oval da raquete -->
+                <ellipse cx="19" cy="19" rx="13" ry="15" transform="rotate(-20 19 19)" stroke="#AAFF00" stroke-width="1.8"/>
+                <!-- Cordas horizontais -->
+                <line x1="10" y1="13" x2="29" y2="18" stroke="#AAFF00" stroke-width="0.8" opacity=".6"/>
+                <line x1="8"  y1="18" x2="29" y2="23" stroke="#AAFF00" stroke-width="0.8" opacity=".6"/>
+                <line x1="9"  y1="23" x2="27" y2="28" stroke="#AAFF00" stroke-width="0.8" opacity=".6"/>
+                <line x1="12" y1="8"  x2="27" y2="12" stroke="#AAFF00" stroke-width="0.8" opacity=".6"/>
+                <!-- Cordas verticais -->
+                <line x1="13" y1="6"  x2="10" y2="31" stroke="#AAFF00" stroke-width="0.8" opacity=".6"/>
+                <line x1="18" y1="5"  x2="15" y2="32" stroke="#AAFF00" stroke-width="0.8" opacity=".6"/>
+                <line x1="23" y1="6"  x2="21" y2="31" stroke="#AAFF00" stroke-width="0.8" opacity=".6"/>
+                <line x1="27" y1="9"  x2="26" y2="29" stroke="#AAFF00" stroke-width="0.8" opacity=".6"/>
+                <!-- Ponto doce (bola de impacto) -->
+                <circle cx="19" cy="19" r="2.5" fill="#AAFF00" opacity=".9"/>
+              </svg>
+            </div>
+            <h3 class="jogo-card-title">Golpe destaque</h3>
+            <p class="jogo-card-value accent-text">Forehand</p>
+            <p class="jogo-card-desc">Meu forehand é minha principal arma — gerador de pontos e símbolo do meu jogo ofensivo.</p>
+          </div>
+
+        <div class="video-wrapper reveal reveal-delay-3">
+          <div class="video-placeholder" id="jogoVideo" role="img" aria-label="Espaço para vídeo do forehand em ação">
+            <div class="video-overlay">
+              <button class="video-play-btn" aria-label="Reproduzir vídeo do forehand" disabled>
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="30" stroke="#AAFF00" stroke-width="2"/><path d="M26 20l20 12-20 12V20z" fill="#AAFF00"/></svg>
+              </button>
+              <p class="video-label">
+                Vídeo · Forehand em ação <span class="badge-soon">Em breve</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── RESULTADOS ─────────────────────────────────────────── -->
+    <section class="section resultados" id="resultados" aria-labelledby="resultadosTitle">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label">Trajetória</span>
+          <h2 class="section-title" id="resultadosTitle">Histórico de competições</h2>
+        </div>
+        <div class="table-wrapper reveal reveal-delay-1">
+          <table class="results-table" role="table" aria-label="Histórico de competições de Erick Giovane">
+            <thead>
+              <tr>
+                <th scope="col">Campeonato</th>
+                <th scope="col">Modalidade</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Posição</th>
+              </tr>
+            </thead>
+            <tbody id="resultadosBody">
+              <!-- preenchido por JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── GALERIA ─────────────────────────────────────────────── -->
+    <section class="section galeria" id="galeria" aria-labelledby="galeriaTitle">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label">Momentos</span>
+          <h2 class="section-title" id="galeriaTitle">Galeria</h2>
+          <p class="section-sub">Treinos · Competições · Bastidores</p>
+        </div>
+        <div class="gallery-grid reveal reveal-delay-1" id="galleryGrid" role="list" aria-label="Galeria de fotos do atleta">
+          <!-- preenchido por JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PATROCÍNIO ──────────────────────────────────────────── -->
+    <section class="section patrocinio" id="patrocinio" aria-labelledby="patrocinioTitle">
+      <div class="patrocinio-bg" aria-hidden="true"></div>
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label">Patrocínio</span>
+          <h2 class="section-title" id="patrocinioTitle">Invista nessa história</h2>
+          <p class="patrocinio-subtitle">Seu apoio transforma treino em campeonato.</p>
+        </div>
+        <p class="patrocinio-texto reveal reveal-delay-1">
+          Cada campeonato participado exige recursos reais: <strong>inscrições</strong>, <strong>deslocamento</strong> e <strong>equipamentos</strong> de alto desempenho. Ao me patrocinar, você entra como parte ativa dessa jornada — com visibilidade garantida e um atleta comprometido em vencer.
+        </p>
+        <div class="cotas-grid reveal reveal-delay-2">
+          <article class="cota-card" id="cotaBronze" aria-label="Cota Bronze">
+            <div class="cota-header">
+              <span class="cota-icon" aria-hidden="true">🥉</span>
+              <h3 class="cota-nome">Bronze</h3>
+            </div>
+            <ul class="cota-beneficios" role="list">
+              <li><svg class="check-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="#AAFF00" stroke-width="1.5"/><path d="M6 10l3 3 5-5" stroke="#AAFF00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Menção nos stories após campeonatos</li>
+              <li><svg class="check-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="#AAFF00" stroke-width="1.5"/><path d="M6 10l3 3 5-5" stroke="#AAFF00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Agradecimento público nas redes sociais</li>
+              <li><svg class="check-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="#AAFF00" stroke-width="1.5"/><path d="M6 10l3 3 5-5" stroke="#AAFF00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Relatório mensal de desempenho</li>
+            </ul>
+            <a href="#contato" class="btn btn-outline cota-cta" id="cotaBronzeBtn">Quero ser Bronze</a>
+          </article>
+          <article class="cota-card cota-card--destaque" id="cotaPrata" aria-label="Cota Prata - Mais escolhido">
+            <div class="cota-badge">Mais escolhido</div>
+            <div class="cota-header">
+              <span class="cota-icon" aria-hidden="true">🥈</span>
+              <h3 class="cota-nome">Prata</h3>
+            </div>
+            <ul class="cota-beneficios" role="list">
+              <li class="beneficio-group-label">Tudo do Bronze, mais:</li>
+              <li><svg class="check-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="#0A1628" stroke-width="1.5"/><path d="M6 10l3 3 5-5" stroke="#0A1628" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Logo na mochila do atleta em competições</li>
+              <li><svg class="check-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="#0A1628" stroke-width="1.5"/><path d="M6 10l3 3 5-5" stroke="#0A1628" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Post dedicado após cada campeonato</li>
+            </ul>
+            <a href="#contato" class="btn btn-primary-dark cota-cta" id="cotaPrataBtn">Quero ser Prata</a>
+          </article>
+          <article class="cota-card" id="cotaOuro" aria-label="Cota Ouro">
+            <div class="cota-header">
+              <span class="cota-icon" aria-hidden="true">🥇</span>
+              <h3 class="cota-nome">Ouro</h3>
+            </div>
+            <ul class="cota-beneficios" role="list">
+              <li class="beneficio-group-label">Tudo do Prata, mais:</li>
+              <li><svg class="check-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="#AAFF00" stroke-width="1.5"/><path d="M6 10l3 3 5-5" stroke="#AAFF00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Logo na camiseta do atleta em quadra</li>
+              <li><svg class="check-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="#AAFF00" stroke-width="1.5"/><path d="M6 10l3 3 5-5" stroke="#AAFF00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Presença em entrevistas e coberturas</li>
+              <li><svg class="check-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="9" stroke="#AAFF00" stroke-width="1.5"/><path d="M6 10l3 3 5-5" stroke="#AAFF00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Conteúdo exclusivo dos bastidores</li>
+            </ul>
+            <a href="#contato" class="btn btn-outline cota-cta" id="cotaOuroBtn">Quero ser Ouro</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONTATO ────────────────────────────────────────────── -->
+    <section class="section contato" id="contato" aria-labelledby="contatoTitle">
+      <div class="container">
+        <div class="section-header reveal">
+          <span class="section-label">Contato</span>
+          <h2 class="section-title" id="contatoTitle">Vamos conversar?</h2>
+        </div>
+        <div class="contato-grid">
+          <div class="contato-form-wrapper reveal reveal-delay-1">
+            <form class="contato-form" id="contatoForm" novalidate aria-label="Formulário de contato">
+              <div class="form-group">
+                <label for="formNome">Nome <span class="required" aria-hidden="true">*</span></label>
+                <input type="text" id="formNome" name="nome" placeholder="Seu nome completo" required autocomplete="name" />
+              </div>
+              <div class="form-group">
+                <label for="formEmpresa">Empresa</label>
+                <input type="text" id="formEmpresa" name="empresa" placeholder="Nome da empresa ou marca" autocomplete="organization" />
+              </div>
+              <div class="form-group">
+                <label for="formEmail">E-mail <span class="required" aria-hidden="true">*</span></label>
+                <input type="email" id="formEmail" name="email" placeholder="seu@email.com" required autocomplete="email" />
+              </div>
+              <div class="form-group">
+                <label for="formTelefone">Telefone <span class="optional">(opcional)</span></label>
+                <input type="tel" id="formTelefone" name="telefone" placeholder="(44) 9 0000-0000" autocomplete="tel" />
+              </div>
+              <div class="form-group">
+                <label for="formMensagem">Mensagem <span class="required" aria-hidden="true">*</span></label>
+                <textarea id="formMensagem" name="mensagem" rows="4" placeholder="Como posso te ajudar? Conte sobre o interesse no patrocínio ou qualquer outra dúvida." required></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary btn-full" id="formSubmitBtn">Enviar mensagem</button>
+              <p class="form-note" role="status" aria-live="polite" id="formStatus"></p>
+            </form>
+          </div>
+          <div class="contato-info reveal reveal-delay-2">
+            <p class="contato-desc">Estou disponível para falar sobre patrocínio, parcerias ou qualquer outro assunto. Me chama diretamente pelo WhatsApp ou manda um e-mail.</p>
+            <div class="contato-links">
+              <a href="#" class="contato-link contato-link--whatsapp" id="whatsappLink" target="_blank" rel="noopener noreferrer" aria-label="Enviar mensagem pelo WhatsApp">
+                <svg class="contato-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                WhatsApp
+              </a>
+              <a href="#" class="contato-link contato-link--email" id="emailLink" aria-label="Enviar e-mail para Erick Giovane">
+                <svg class="contato-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <span id="emailText">erickgiovane@email.com</span>
+              </a>
+            </div>
+            <div class="contato-credito">
+              <div class="credito-divider" aria-hidden="true"></div>
+              <p>Treinado por <strong id="creditoTreinador">Diego Tambori</strong></p>
+              <p><span id="creditoClube">Arena Tennistorm</span> · <span id="creditoCidade">Maringá, PR</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <span class="footer-name">Erick Giovane</span>
+        <span class="footer-tagline">Atleta de Tênis · Maringá, PR</span>
+      </div>
+      <nav class="footer-nav" aria-label="Menu do rodapé">
+        <ul>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#jogo">Jogo</a></li>
+          <li><a href="#resultados">Resultados</a></li>
+          <li><a href="#galeria">Galeria</a></li>
+          <li><a href="#contato">Contato</a></li>
+        </ul>
+      </nav>
+      <div class="footer-actions">
+        <a href="#patrocinio" class="btn btn-primary btn-sm" id="footerSponsorBtn">Me Patrocine</a>
+        <div class="footer-social" role="list" aria-label="Redes sociais">
+          <a href="#" class="social-link" id="instagramLink" aria-label="Instagram de Erick Giovane" rel="noopener noreferrer" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Erick Giovane · Todos os direitos reservados · <a href="admin.html" style="color:rgba(255,255,255,0.2);font-size:0.7rem;">Admin</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
