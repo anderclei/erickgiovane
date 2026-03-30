@@ -16,3 +16,5 @@ Thumbs.db
 # Local env (nunca commitar chaves reais aqui)
 .env
 .env.local
+
+.vercel

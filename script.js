@@ -73,21 +73,54 @@ async function renderSiteData() {
   }
 
   // ── Galeria ───────────────────────────────────────────────
-  const galleryGrid = document.getElementById('galleryGrid');
+  const galleryGrid    = document.getElementById('galleryGrid');
+  const galleryFilters = document.getElementById('galleryFilters');
+  
   if (galleryGrid && data.galeria) {
+    // 1. Coleta categorias únicas
+    const cats = ['all', ...new Set(data.galeria.filter(i => i.src).map(i => i.legenda).filter(Boolean))];
+    
+    // 2. Renderiza filtros
+    if (galleryFilters) {
+      galleryFilters.innerHTML = cats.map(cat => `
+        <button class="filter-btn${cat === 'all' ? ' active' : ''}" data-filter="${cat}">
+          ${cat === 'all' ? 'Todas' : escHtml(cat)}
+        </button>
+      `).join('');
+
+      galleryFilters.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filter = btn.dataset.filter;
+          galleryFilters.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b === btn));
+          
+          document.querySelectorAll('.gallery-item').forEach(item => {
+            const itemCat = item.dataset.category;
+            item.classList.toggle('hide', filter !== 'all' && itemCat !== filter);
+          });
+        });
+      });
+    }
+
+    // 3. Renderiza fotos
     galleryGrid.innerHTML = data.galeria.map((item, i) => {
       const isLarge = i === 0;
       const hasImg  = item.src && item.src.length > 0;
       return `
-        <div class="gallery-item${isLarge ? ' gallery-item--large' : ''}" role="listitem" aria-label="${escHtml(item.alt || item.legenda || 'Foto do atleta')}">
+        <div class="gallery-item${isLarge ? ' gallery-item--large' : ''}" 
+             data-category="${escHtml(item.legenda || 'Geral')}"
+             role="listitem" 
+             aria-label="${escHtml(item.alt || item.legenda || 'Foto do atleta')}">
           ${hasImg
             ? `<img
                 src="${escHtml(item.src)}"
                 alt="${escHtml(item.alt || 'Erick Giovane')}"
                 class="gallery-real-img"
                 loading="lazy"
-                onerror="this.closest('.gallery-item').innerHTML+='<div class=gallery-placeholder gp-${(i % 6) + 1}><span class=gallery-label>${escHtml(item.legenda || 'Em breve')}</span></div>';this.remove()"
-              />${item.legenda ? `<span class="gallery-label">${escHtml(item.legenda)}</span>` : ''}`
+              />
+              <div class="gallery-overlay">
+                <span class="gallery-cat">${escHtml(item.legenda || 'Momento')}</span>
+                <span class="gallery-text">${escHtml(item.alt || 'Erick Giovane')}</span>
+              </div>`
             : `<div class="gallery-placeholder gp-${(i % 6) + 1}">
                 <span class="gallery-label">${escHtml(item.legenda || 'Em breve')}</span>
                </div>`
@@ -95,6 +128,14 @@ async function renderSiteData() {
         </div>
       `;
     }).join('');
+
+    // 4. Lightbox Click
+    galleryGrid.querySelectorAll('.gallery-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const img = item.querySelector('img');
+        if (img) showLightbox(img.src, img.alt);
+      });
+    });
   }
 
   // ── Resultados ────────────────────────────────────────────
@@ -258,6 +299,38 @@ function initForm() {
 // ─────────────────────────────────────────────────────────────
 // 6. HELPER
 // ─────────────────────────────────────────────────────────────
+
+// ─────────────────────────────────────────────────────────────
+// 6. LIGHTBOX — galeria
+// ─────────────────────────────────────────────────────────────
+function showLightbox(src, alt) {
+  const lightbox = document.getElementById('lightbox');
+  const img      = document.getElementById('lightboxImg');
+  const close    = document.getElementById('lightboxClose');
+  if (!lightbox || !img) return;
+
+  img.src = src;
+  img.alt = alt || '';
+  lightbox.classList.add('open');
+  lightbox.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+
+  const closeLightbox = () => {
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  };
+
+  close.onclick = closeLightbox;
+  lightbox.onclick = (e) => { if (e.target === lightbox) closeLightbox(); };
+  document.addEventListener('keydown', function esc(e) {
+    if (e.key === 'Escape') {
+      closeLightbox();
+      document.removeEventListener('keydown', esc);
+    }
+  });
+}
+
 function escHtml(str) {
   if (!str) return '';
   return String(str)

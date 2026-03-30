@@ -266,13 +266,23 @@
         <div class="section-header reveal">
           <span class="section-label">Momentos</span>
           <h2 class="section-title" id="galeriaTitle">Galeria</h2>
-          <p class="section-sub">Treinos · Competições · Bastidores</p>
+        <div class="gallery-filters reveal reveal-delay-1" id="galleryFilters">
+          <button class="filter-btn active" data-filter="all">Todas</button>
+          <!-- Gerado dinamicamente -->
         </div>
-        <div class="gallery-grid reveal reveal-delay-1" id="galleryGrid" role="list" aria-label="Galeria de fotos do atleta">
+        <div class="gallery-grid reveal reveal-delay-2" id="galleryGrid" role="list" aria-label="Galeria de fotos do atleta">
           <!-- preenchido por JS -->
         </div>
       </div>
     </section>
+
+    <!-- Lightbox Overlay -->
+    <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog">
+      <div class="lightbox-content">
+        <button class="lightbox-close" id="lightboxClose" aria-label="Fechar galeria">&times;</button>
+        <img src="" alt="" class="lightbox-img" id="lightboxImg" />
+      </div>
+    </div>
 
     <!-- ── PATROCÍNIO ──────────────────────────────────────────── -->
     <section class="section patrocinio" id="patrocinio" aria-labelledby="patrocinioTitle">

@@ -378,6 +378,19 @@ function renderMetricsEditor() {
 // TAB: GALERIA
 // ─────────────────────────────────────────────────────────────
 function fillGaleriaTab() {
+  if (!adminData.galeriaCategorias) {
+    adminData.galeriaCategorias = 'Competição, Treino, Bastidores';
+  }
+
+  const catField = document.getElementById('galleryCategories');
+  if (catField) {
+    catField.value = adminData.galeriaCategorias || '';
+    catField.addEventListener('input', (e) => {
+      adminData.galeriaCategorias = e.target.value;
+      renderGaleriaEditor(); // Re-render to update selects
+    });
+  }
+
   renderGaleriaEditor();
   document.getElementById('addGalleryItemBtn').addEventListener('click', () => {
     adminData.galeria.push({ src: '', alt: '', legenda: '' });
@@ -388,50 +401,68 @@ function fillGaleriaTab() {
 function renderGaleriaEditor() {
   const container = document.getElementById('galleryEditor');
   const countEl   = document.getElementById('galleryCount');
+  if (!container) return;
+  
   container.innerHTML = '';
-  countEl.textContent = `${adminData.galeria.length}/6`;
+  countEl.textContent = `${adminData.galeria.length}`;
+
+  const availableCats = (adminData.galeriaCategorias || '')
+    .split(',')
+    .map(c => c.trim())
+    .filter(Boolean);
 
   adminData.galeria.forEach((item, i) => {
     const div = document.createElement('div');
     div.className = 'gallery-editor-item';
 
     const hasImg = item.src && item.src.length > 0;
+    
+    // Create categories options
+    const catOptions = availableCats.map(c => 
+      `<option value="${escHtml(c)}" ${item.legenda === c ? 'selected' : ''}>${escHtml(c)}</option>`
+    ).join('');
+
     div.innerHTML = `
       ${hasImg
-        ? `<img class="gallery-editor-thumb" src="${escHtml(item.src)}" alt="${escHtml(item.alt)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" /><div class="gallery-thumb-placeholder" style="display:none">Imagem não encontrada</div>`
+        ? `<img class="gallery-editor-thumb" src="${escHtml(item.src)}" alt="${escHtml(item.alt)}" loading="lazy" />`
         : `<div class="gallery-thumb-placeholder">Sem imagem</div>`
       }
       <div class="gallery-editor-fields">
-        <label style="font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--c-muted);margin-bottom:.25rem;display:block">Upload</label>
-        <input type="file" accept="image/*" class="file-input gallery-upload" data-idx="${i}" style="margin-bottom:.5rem" />
-        <div class="gallery-editor-row">
-          <input type="text" placeholder="URL (img/foto1.jpg)" value="${escHtml(item.src)}" data-idx="${i}" data-field="src" />
+        <div style="display:flex;gap:.5rem;margin-bottom:.5rem">
+          <div style="flex:1">
+            <label style="font-size:.65rem;text-transform:uppercase;color:var(--c-muted)">Categoria</label>
+            <select class="adm-input" data-idx="${i}" data-field="legenda" style="margin-top:.2rem">
+              <option value="">Sem categoria</option>
+              ${catOptions}
+            </select>
+          </div>
+          <div style="width:100px">
+            <label style="font-size:.65rem;text-transform:uppercase;color:var(--c-muted)">Upload</label>
+            <input type="file" accept="image/*" class="file-input gallery-upload" data-idx="${i}" style="margin-top:.2rem" />
+          </div>
+        </div>
+        <div class="gallery-editor-row" style="margin-bottom:.5rem">
+          <input type="text" placeholder="URL da Foto" value="${escHtml(item.src)}" data-idx="${i}" data-field="src" />
         </div>
         <div class="gallery-editor-row">
-          <input type="text" placeholder="Legenda (ex: Competição)" value="${escHtml(item.legenda)}" data-idx="${i}" data-field="legenda" />
-          <button class="adm-btn adm-btn--danger" data-remove="${i}">✕</button>
+          <input type="text" placeholder="Texto Alternativo (Alt)" value="${escHtml(item.alt)}" data-idx="${i}" data-field="alt" />
+          <button class="adm-btn adm-btn--danger" data-remove="${i}" style="padding:.2rem .4rem">✕</button>
         </div>
       </div>
     `;
     container.appendChild(div);
   });
 
-  // URL input listeners
-  container.querySelectorAll('input[data-field="src"]').forEach((input) => {
+  // Event Listeners
+  container.querySelectorAll('input[data-field], select[data-field]').forEach(input => {
     input.addEventListener('input', (e) => {
-      adminData.galeria[+e.target.dataset.idx].src = e.target.value;
-      renderGaleriaEditor();
+      const { idx, field } = e.target.dataset;
+      adminData.galeria[+idx][field] = e.target.value;
+      if (field === 'src') renderGaleriaEditor(); // Refresh thumb
     });
   });
 
-  container.querySelectorAll('input[data-field="legenda"]').forEach((input) => {
-    input.addEventListener('input', (e) => {
-      adminData.galeria[+e.target.dataset.idx].legenda = e.target.value;
-    });
-  });
-
-  // File uploads
-  container.querySelectorAll('.gallery-upload').forEach((input) => {
+  container.querySelectorAll('.gallery-upload').forEach(input => {
     input.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       const idx  = +e.target.dataset.idx;
@@ -444,10 +475,10 @@ function renderGaleriaEditor() {
     });
   });
 
-  // Remove
-  container.querySelectorAll('[data-remove]').forEach((btn) => {
+  container.querySelectorAll('[data-remove]').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      adminData.galeria.splice(+e.target.dataset.remove, 1);
+      const idx = +e.currentTarget.dataset.remove;
+      adminData.galeria.splice(idx, 1);
       renderGaleriaEditor();
     });
   });

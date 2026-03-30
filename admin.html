@@ -225,8 +225,17 @@
       <section class="admin-tab" id="tab-galeria" aria-label="Configurações da Galeria" hidden>
 
         <div class="tab-section">
+          <h2 class="tab-section-title">Categorias disponíveis</h2>
+          <p class="tab-desc">Defina as categorias para filtrar as fotos no site (ex: Competição, Treino, Patrocinadores).</p>
+          <div class="adm-form-group">
+            <input type="text" id="galleryCategories" placeholder="Competição, Treino, Bastidores, Social" />
+            <p class="field-hint">Separe as categorias por vírgula</p>
+          </div>
+        </div>
+
+        <div class="tab-section">
           <h2 class="tab-section-title">Fotos da galeria <span class="badge-count" id="galleryCount">0/6</span></h2>
-          <p class="tab-desc">A primeira foto ocupa posição de destaque (tamanho duplo). Arraste para reordenar.</p>
+          <p class="tab-desc">A primeira foto ocupa posição de destaque. Defina a legenda e a categoria de cada uma.</p>
           <div class="gallery-editor" id="galleryEditor">
             <!-- gerado por JS -->
           </div>
