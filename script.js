@@ -121,8 +121,7 @@ async function renderSiteData() {
                 loading="lazy"
               />
               <div class="gallery-overlay">
-                <span class="gallery-cat">${escHtml(displayCat)}</span>
-                <span class="gallery-text">${escHtml(item.alt || 'Erick Giovane')}</span>
+                <!-- Overlay de texto removido a pedido do usuário -->
               </div>`
             : `<div class="gallery-placeholder gp-${(i % 6) + 1}">
                 <span class="gallery-label">${escHtml(displayCat || 'Em breve')}</span>
